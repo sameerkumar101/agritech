@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Farmers Income Tracker</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="bg-green-50 p-6">
+    <!-- Navigation Bar -->
+    <nav class="bg-white shadow-md p-4 flex justify-between items-center sticky top-0 z-50">
+        <h1 class="text-green-700 text-2xl font-bold">AgriTech</h1>
+        <ul class="flex space-x-6 text-gray-700">
+            <li><a href="project.html" class="hover:text-green-600 transition duration-300">Home</a></li>
+            <li><a href="cs.html" class="hover:text-green-600 transition duration-300">Crop Selection</a></li>
+            <li><a href="pi.html" class="hover:text-green-600 transition duration-300">Pest Identification</a></li>
+            <li><a href="pmp.html" class="hover:text-green-600 transition duration-300">Management</a></li>
+            <li><a href="about.html" class="hover:text-green-600 transition duration-300">About</a></li>
+            <li><a href="contact.html" class="hover:text-green-600 transition duration-300">Contact</a></li>
+            <li><a href="blog.html" class="hover:text-green-600 transition duration-300">Blog</a></li>
+            <li><a href="income tracking.html" class="text-gray-700 hover:text-green-700 font-bold transition duration-300">Income Tracking</a></li>
+        </ul>
+    </nav>
+
+    <!-- Dashboard Section -->
+    <div class="max-w-6xl mx-auto bg-white p-6 rounded shadow-lg mt-6 transition hover:shadow-xl">
+        <h2 class="text-2xl font-bold mb-4">Farmers Income & Expense Tracker</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
+            <div class="bg-green-100 p-4 rounded shadow transition hover:shadow-lg">
+                <h3 class="text-lg font-semibold">Total Income</h3>
+                <p class="text-2xl font-bold text-green-600" id="totalIncome">₹0</p>
+            </div>
+            <div class="bg-red-100 p-4 rounded shadow transition hover:shadow-lg">
+                <h3 class="text-lg font-semibold">Total Expense</h3>
+                <p class="text-2xl font-bold text-red-600" id="totalExpense">₹0</p>
+            </div>
+            <div class="bg-blue-100 p-4 rounded shadow transition hover:shadow-lg">
+                <h3 class="text-lg font-semibold">Net Profit</h3>
+                <p class="text-2xl font-bold text-blue-600" id="netProfit">₹0</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Form Section -->
+    <div class="max-w-6xl mx-auto bg-white p-6 rounded shadow-lg mt-6 transition hover:shadow-xl">
+        <form id="incomeForm" class="mb-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <input type="date" id="date" class="p-2 border rounded transition duration-300 hover:shadow-md" required>
+                <input type="number" id="income" placeholder="Income (₹)" class="p-2 border rounded transition duration-300 hover:shadow-md" required>
+                <input type="number" id="expense" placeholder="Expense (₹)" class="p-2 border rounded transition duration-300 hover:shadow-md" required>
+            </div>
+            <button type="submit" class="mt-4 bg-green-600 text-white px-4 py-2 rounded transition duration-300 hover:bg-green-700 hover:shadow-md">Submit</button>
+        </form>
+    </div>
+
+    <!-- Chart Section -->
+    <div class="max-w-6xl mx-auto bg-white p-6 rounded shadow-lg mt-6 transition hover:shadow-xl">
+        <h3 class="text-xl font-semibold mb-4">Income & Expense Overview</h3>
+        <canvas id="incomeChart"></canvas>
+    </div>
+
+    <!-- Table Section -->
+    <div class="max-w-6xl mx-auto bg-white p-6 rounded shadow-lg mt-6 transition hover:shadow-xl">
+        <h3 class="text-xl font-semibold mb-2">Income & Expense Records</h3>
+        <table class="w-full border-collapse border border-gray-300" id="dataTable">
+            <thead>
+                <tr class="bg-gray-200">
+                    <th class="border p-2">Date</th>
+                    <th class="border p-2">Income (₹)</th>
+                    <th class="border p-2">Expense (₹)</th>
+                    <th class="border p-2">Net (₹)</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+
+    <script>
+        let chart;
+
+        document.getElementById("incomeForm").addEventListener("submit", function (e) {
+            e.preventDefault();
+            let date = document.getElementById("date").value;
+            let income = parseFloat(document.getElementById("income").value) || 0;
+            let expense = parseFloat(document.getElementById("expense").value) || 0;
+            let net = income - expense;
+            
+            let tableBody = document.querySelector("#dataTable tbody");
+            let row = `<tr class='border hover:bg-gray-100 transition'>
+                <td class='border p-2'>${date}</td>
+                <td class='border p-2 text-green-600'>₹${income}</td>
+                <td class='border p-2 text-red-600'>₹${expense}</td>
+                <td class='border p-2 text-blue-600'>₹${net}</td>
+            </tr>`;
+            tableBody.innerHTML += row;
+
+            updateDashboard(income, expense);
+            updateChart();
+            document.getElementById("incomeForm").reset();
+        });
+
+        function updateDashboard(income, expense) {
+            let totalIncome = parseFloat(document.getElementById("totalIncome").innerText.replace('₹', '')) + income;
+            let totalExpense = parseFloat(document.getElementById("totalExpense").innerText.replace('₹', '')) + expense;
+            document.getElementById("totalIncome").innerText = `₹${totalIncome}`;
+            document.getElementById("totalExpense").innerText = `₹${totalExpense}`;
+            document.getElementById("netProfit").innerText = `₹${totalIncome - totalExpense}`;
+        }
+
+        function updateChart() {
+            let ctx = document.getElementById('incomeChart').getContext('2d');
+            if (chart) chart.destroy();
+            chart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Income', 'Expense'],
+                    datasets: [{
+                        label: 'Amount (₹)',
+                        data: [
+                            parseFloat(document.getElementById("totalIncome").innerText.replace('₹', '')),
+                            parseFloat(document.getElementById("totalExpense").innerText.replace('₹', ''))
+                        ],
+                        backgroundColor: ['#38a169', '#e53e3e']
+                    }]
+                }
+            });
+        }
+    </script>
+</body>
+</html>

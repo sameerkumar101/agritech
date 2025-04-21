@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en" x-data="{ darkMode: localStorage.getItem('dark') === 'true', lang: 'en' }" :class="{ 'dark': darkMode }">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agritec Blog</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/alpinejs/3.10.5/cdn.min.js" defer></script>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        .fade-in { opacity: 0; transform: translateY(20px); transition: opacity 0.6s ease-out, transform 0.6s ease-out; }
+        .fade-in.visible { opacity: 1; transform: translateY(0); }
+        .dark { background-color: #1a202c; color: white; }
+        .dark body, .dark nav, .dark section, .dark footer { background-color: #1a202c; color: white; }
+    </style>
+</head>
+<body x-bind:class="{'dark': darkMode}" class="bg-gray-100 dark:bg-gray-900 dark:text-white font-sans">
+    <!-- Navigation Bar -->
+    <nav class="bg-white dark:bg-gray-800 shadow-md p-4 flex justify-between items-center sticky top-0 z-50">
+        <h1 class="text-green-700 dark:text-green-400 text-2xl font-bold">AgriTech</h1>
+        <ul class="flex space-x-6 text-gray-700 dark:text-white">
+            <li><a href="project.html" class="hover:text-green-600">Home</a></li>
+            <li><a href="cs.html" class="hover:text-green-600">Crop Selection</a></li>
+            <li><a href="pi.html" class="hover:text-green-600">Pest Identification</a></li>
+            <li><a href="pmp.html" class="hover:text-green-600">Management</a></li>
+            <li><a href="about.html" class="hover:text-green-600">About</a></li>
+            <li><a href="contact.html" class="hover:text-green-600">Contact</a></li>
+            <li><a href="blog.html" class="hover:text-green-600">Blog</a></li>
+        </ul>
+        <div class="flex items-center space-x-4">
+            <select x-model="lang" class="border px-3 py-2 rounded dark:bg-gray-700" @change="changeLanguage">
+                <option value="en">English</option>
+                <option value="hi">Hindi</option>
+                <option value="ta">Tamil</option>
+                <option value="te">Telugu</option>
+                <option value="kn">Kannada</option>
+                <option value="ml">Malayalam</option>
+                <option value="mr">Marathi</option>
+                <option value="bn">Bengali</option>
+                <option value="gu">Gujarati</option>
+                <option value="pa">Punjabi</option>
+            </select>
+            <button @click="darkMode = !darkMode; localStorage.setItem('dark', darkMode)" class="border px-4 py-2 rounded text-gray-700 dark:text-white hover:bg-gray-200 dark:hover:bg-gray-600">
+                Toggle Mode
+            </button>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="bg-green-500 text-white py-24 text-center">
+        <h1 class="text-5xl font-extrabold" x-text="translations[lang].heroTitle">Welcome to the Agritec Blog</h1>
+        <p class="mt-4 text-xl" x-text="translations[lang].heroSubtitle">Your source for the latest farming tips, news, and updates.</p>
+    </header>
+
+    <!-- Weather Update Section -->
+    <section class="container mx-auto mt-10 px-4">
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+            <h2 class="text-2xl font-bold" x-text="translations[lang].weatherTitle">Weather Update</h2>
+            <p class="text-gray-700 dark:text-gray-300" x-text="translations[lang].weatherDescription">Check the latest weather forecast for your region to plan your farming activities.</p>
+            <a href="#" class="mt-4 inline-block bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600" x-text="translations[lang].weatherButton">View Forecast</a>
+        </div>
+    </section>
+
+    <!-- Blog Posts Section with Videos -->
+    <section class="container mx-auto mt-10 px-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div class="fade-in bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden p-6">
+            <video class="w-full h-48 object-cover" controls>
+                <source src="video1.mp4" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+            <h2 class="text-2xl font-bold mt-4" x-text="translations[lang].blogPost1Title">10 Tips for Sustainable Farming</h2>
+            <p class="text-gray-700 dark:text-gray-300" x-text="translations[lang].blogPost1Description">Learn how to farm sustainably with these 10 easy tips.</p>
+            <a href="#" class="mt-4 inline-block bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600" x-text="translations[lang].readMore">Read More</a>
+        </div>
+
+        <div class="fade-in bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden p-6">
+            <video class="w-full h-48 object-cover" controls>
+                <source src="video2.mp4" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+            <h2 class="text-2xl font-bold mt-4" x-text="translations[lang].blogPost2Title">The Future of Organic Farming</h2>
+            <p class="text-gray-700 dark:text-gray-300" x-text="translations[lang].blogPost2Description">Discover the future of organic farming.</p>
+            <a href="#" class="mt-4 inline-block bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600" x-text="translations[lang].readMore">Read More</a>
+        </div>
+    </section>
+
+    <!-- Community Forum Section -->
+    <section class="container mx-auto mt-10 px-4">
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+            <h2 class="text-2xl font-bold" x-text="translations[lang].communityTitle">Join Our Community</h2>
+            <p class="text-gray-700 dark:text-gray-300" x-text="translations[lang].communityDescription">Connect with other farmers, share your experiences, and get expert advice.</p>
+            <a href="#" class="mt-4 inline-block bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600" x-text="translations[lang].communityButton">Visit Forum</a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-green-700 text-white mt-20 py-10 text-center">
+        <p x-text="translations[lang].footerText">&copy; 2025 Agritec. All rights reserved.</p>
+        <div class="mt-4">
+            <a href="#" class="mx-2 hover:text-green-200" x-text="translations[lang].privacyPolicy">Privacy Policy</a>
+            <a href="#" class="mx-2 hover:text-green-200" x-text="translations[lang].termsOfService">Terms of Service</a>
+        </div>
+    </footer>
+
+    <script>
+        // Language Translations
+        const translations = {
+    en: {
+        heroTitle: "Welcome to the Agritec Blog",
+        heroSubtitle: "Your source for the latest farming tips, news, and updates.",
+        weatherTitle: "Weather Update",
+        weatherDescription: "Check the latest weather forecast for your region to plan your farming activities.",
+        weatherButton: "View Forecast",
+        blogPost1Title: "10 Tips for Sustainable Farming",
+        blogPost1Description: "Learn how to farm sustainably with these 10 easy tips.",
+        blogPost2Title: "The Future of Organic Farming",
+        blogPost2Description: "Discover the future of organic farming.",
+        readMore: "Read More",
+        communityTitle: "Join Our Community",
+        communityDescription: "Connect with other farmers, share your experiences, and get expert advice.",
+        communityButton: "Visit Forum",
+        footerText: "© 2025 Agritec. All rights reserved.",
+        privacyPolicy: "Privacy Policy",
+        termsOfService: "Terms of Service"
+    },
+    hi: {
+        heroTitle: "अग्रिटेक ब्लॉग में आपका स्वागत है",
+        heroSubtitle: "नवीनतम कृषि युक्तियों, समाचार और अपडेट के लिए आपका स्रोत।",
+        weatherTitle: "मौसम अपडेट",
+        weatherDescription: "अपने क्षेत्र के लिए नवीनतम मौसम पूर्वानुमान की जाँच करें।",
+        weatherButton: "पूर्वानुमान देखें",
+        blogPost1Title: "टिकाऊ खेती के 10 टिप्स",
+        blogPost1Description: "इन 10 आसान युक्तियों के साथ टिकाऊ खेती करना सीखें।",
+        blogPost2Title: "जैविक खेती का भविष्य",
+        blogPost2Description: "जैविक खेती के भविष्य की खोज करें।",
+        readMore: "और पढ़ें",
+        communityTitle: "हमारे समुदाय से जुड़ें",
+        communityDescription: "अन्य किसानों से जुड़ें, अपने अनुभव साझा करें और विशेषज्ञ सलाह प्राप्त करें।",
+        communityButton: "फोरम पर जाएं",
+        footerText: "© 2025 अग्रिटेक। सर्वाधिकार सुरक्षित।",
+        privacyPolicy: "गोपनीयता नीति",
+        termsOfService: "सेवा की शर्तें"
+    },
+    ta: {
+        heroTitle: "அக்ரிடெக் வலைப்பதிவுக்கு வரவேற்கிறோம்",
+        heroSubtitle: "புதிதாக விவசாய முறைகள், செய்திகள் மற்றும் புதுப்பிப்புகளுக்கான உங்கள் ஆதாரம்.",
+        weatherTitle: "வானிலை புதுப்பிப்பு",
+        weatherDescription: "உங்கள் பகுதியுக்கான சமீபத்திய வானிலை முன்னறிவிப்பை பார்க்கவும்.",
+        weatherButton: "முன்னறிவிப்பை பார்க்க",
+        blogPost1Title: "நிலைத்திருக்கும் விவசாயத்திற்கு 10 குறிப்புகள்",
+        blogPost1Description: "இந்த 10 எளிய குறிப்புகளைப் பயன்படுத்தி நிலையான விவசாயத்தைப் பயிலுங்கள்.",
+        blogPost2Title: "இயற்கை விவசாயத்தின் எதிர்காலம்",
+        blogPost2Description: "இயற்கை விவசாயத்தின் எதிர்காலத்தை அறியுங்கள்.",
+        readMore: "மேலும் வாசிக்க",
+        communityTitle: "எங்கள் சமூகத்தில் சேருங்கள்",
+        communityDescription: "மற்ற விவசாயிகளுடன் இணைக்கவும், உங்கள் அனுபவங்களைப் பகிரவும், மற்றும் நிபுணர்கள் ஆலோசனை பெறவும்.",
+        communityButton: "கூட்டுறவுக்கு செல்லவும்",
+        footerText: "© 2025 அக்ரிடெக். அனைத்து உரிமைகளும் பாதுகாக்கப்பட்டவை.",
+        privacyPolicy: "தனியுரிமை கொள்கை",
+        termsOfService: "சேவை விதிமுறைகள்"
+    },
+    te: {
+        heroTitle: "అగ్రిటెక్ బ్లాగ్‌కి స్వాగతం",
+        heroSubtitle: "తాజా వ్యవసాయ చిట్కాలు, వార్తలు మరియు నవీకరణల కోసం మీ మూలం.",
+        weatherTitle: "వాతావరణ నవీకరణ",
+        weatherDescription: "మీ ప్రాంతానికి సంబంధించిన తాజా వాతావరణ సూచనను తనిఖీ చేయండి.",
+        weatherButton: "ఫోరకాస్ట్ వీక్షించండి",
+        blogPost1Title: "సుస్థిర వ్యవసాయానికి 10 చిట్కాలు",
+        blogPost1Description: "ఈ 10 సులభమైన చిట్కాలతో స్థిరమైన వ్యవసాయాన్ని నేర్చుకోండి.",
+        blogPost2Title: "సేంద్రీయ వ్యవసాయం యొక్క భవిష్యత్తు",
+        blogPost2Description: "సేంద్రీయ వ్యవసాయ భవిష్యత్తును కనుగొనండి.",
+        readMore: "మరింత చదవండి",
+        communityTitle: "మా కమ్యూనిటీలో చేరండి",
+        communityDescription: "ఇతర రైతులతో కలుసుకోండి, మీ అనుభవాలను పంచుకోండి, మరియు నిపుణుల సలహా పొందండి.",
+        communityButton: "ఫోరమ్ సందర్శించండి",
+        footerText: "© 2025 అగ్రిటెక్. అన్ని హక్కులూ రిజర్వ్ చేయబడ్డాయి.",
+        privacyPolicy: "గోప్యతా విధానం",
+        termsOfService: "సేవా నిబంధనలు"
+    },
+    kn: {
+        heroTitle: "ಅಗ್ರಿಟೆಕ್ ಬ್ಲಾಗ್‌ಗೆ ಸುಸ್ವಾಗತ",
+        heroSubtitle: "ನಿಮ್ಮ ಕೃಷಿ ಚಟುವಟಿಕೆಗಳನ್ನು ಯೋಜಿಸಲು ಅಗತ್ಯವಾದ ಮಾಹಿತಿಯೊಂದಿಗೆ.",
+        weatherTitle: "ಹವಾಮಾನ ಮಾಹಿತಿ",
+        weatherDescription: "ನಿಮ್ಮ ಪ್ರದೇಶದ ಇತ್ತೀಚಿನ ಹವಾಮಾನ ಮುನ್ಸೂಚನೆಯನ್ನು ಪರಿಶೀಲಿಸಿ.",
+        weatherButton: "ಮುನ್ಸೂಚನೆ ನೋಡಿ",
+        blogPost1Title: "ಸ್ಥಿರ ಕೃಷಿಗೆ 10 ಸಲಹೆಗಳು",
+        blogPost1Description: "ಈ 10 ಸುಲಭ ಸಲಹೆಗಳೊಂದಿಗೆ ಸ್ಥಿರ ಕೃಷಿಯನ್ನು ಕಲಿಯಿರಿ.",
+        blogPost2Title: "ಜೈವಿಕ ಕೃಷಿಯ ಭವಿಷ್ಯ",
+        blogPost2Description: "ಜೈವಿಕ ಕೃಷಿಯ ಭವಿಷ್ಯವನ್ನು ಅನ್ವೇಷಿಸಿ.",
+        readMore: "ಇನ್ನಷ್ಟು ಓದಿ",
+        communityTitle: "ನಮ್ಮ ಸಮುದಾಯವನ್ನು ಸೇರಿ",
+        communityDescription: "ಇತರ ರೈತರೊಂದಿಗೆ ಸಂಪರ್ಕ ಸಾಧಿಸಿ, ನಿಮ್ಮ ಅನುಭವವನ್ನು ಹಂಚಿಕೊಳ್ಳಿ ಮತ್ತು ತಜ್ಞರ ಸಲಹೆ ಪಡೆಯಿರಿ.",
+        communityButton: "ಫೋರಂ ಭೇಟಿ",
+        footerText: "© 2025 ಅಗ್ರಿಟೆಕ್. ಎಲ್ಲಾ ಹಕ್ಕುಗಳನ್ನು ಕಾಯ್ದಿರಿಸಲಾಗಿದೆ.",
+        privacyPolicy: "ಗೌಪ್ಯತಾ ನೀತಿ",
+        termsOfService: "ಸೇವಾ ನಿಯಮಗಳು"
+    },
+    ml: {
+        heroTitle: "അഗ്രിടെക് ബ്ലോഗിലേക്ക് സ്വാഗതം",
+        heroSubtitle: "പുതിയ കൃഷി ഉപദേശങ്ങൾ, വാർത്തകൾ, അപ്‌ഡേറ്റുകൾ എന്നിവയ്ക്കുള്ള നിങ്ങളുടെ ഉറവിടം.",
+        weatherTitle: "കാലാവസ്ഥ അപ്‌ഡേറ്റ്",
+        weatherDescription: "നിങ്ങളുടെ പ്രദേശത്തെ കാലാവസ്ഥാ പ്രവചനം പരിശോധിച്ച് കൃഷി പ്രവർത്തനങ്ങൾ ആസൂത്രണം ചെയ്യുക.",
+        weatherButton: "പ്രവചനം കാണുക",
+        blogPost1Title: "സ്ഥിരതയുള്ള കൃഷിക്ക് 10 ടിപ്‌സ്",
+        blogPost1Description: "ഈ 10 ലളിതമായ ഉപദേശങ്ങൾ ഉപയോഗിച്ച് സ്ഥിരതയുള്ള കൃഷി ചെയ്യാൻ പഠിക്കൂ.",
+        blogPost2Title: "ജീവാവാസി കൃഷിയുടെ ഭാവി",
+        blogPost2Description: "ജീവാവാസി കൃഷിയുടെ ഭാവിയെക്കുറിച്ച് അറിയുക.",
+        readMore: "കൂടുതൽ വായിക്കുക",
+        communityTitle: "ഞങ്ങളുടെ സമൂഹത്തിൽ ചേരുക",
+        communityDescription: "മറ്റു കർഷകരുമായി ബന്ധപ്പെടുക, നിങ്ങളുടെ അനുഭവങ്ങൾ പങ്കിടുക, വിദഗ്ധ ഉപദേശം നേടുക.",
+        communityButton: "ഫോറം സന്ദർശിക്കുക",
+        footerText: "© 2025 അഗ്രിടെക്. എല്ലാ അവകാശങ്ങളും സംരക്ഷിച്ചിരിക്കുന്നു.",
+        privacyPolicy: "സ്വകാര്യതാനയം",
+        termsOfService: "സേവന നിബന്ധനകൾ"
+    },
+    mr: {
+        heroTitle: "अॅग्रिटेक ब्लॉगमध्ये आपले स्वागत आहे",
+        heroSubtitle: "ताज्या शेती टिप्स, बातम्या आणि अद्यतनांसाठी तुमचे स्रोत.",
+        weatherTitle: "हवामान अपडेट",
+        weatherDescription: "तुमच्या क्षेत्रासाठी ताजे हवामान अंदाज तपासा आणि शेतीच्या योजना बनवा.",
+        weatherButton: "अंदाज पहा",
+        blogPost1Title: "शाश्वत शेतीसाठी 10 टिप्स",
+        blogPost1Description: "या 10 सोप्या टिप्ससह शाश्वत शेती कशी करावी ते शिका.",
+        blogPost2Title: "सेंद्रिय शेतीचे भविष्य",
+        blogPost2Description: "सेंद्रिय शेतीचे भविष्य जाणून घ्या.",
+        readMore: "अधिक वाचा",
+        communityTitle: "आमच्या समुदायात सामील व्हा",
+        communityDescription: "इतर शेतकऱ्यांशी संपर्क साधा, तुमचे अनुभव शेअर करा आणि तज्ज्ञ सल्ला घ्या.",
+        communityButton: "फोरमला भेट द्या",
+        footerText: "© 2025 अॅग्रिटेक. सर्व हक्क राखीव.",
+        privacyPolicy: "गोपनीयता धोरण",
+        termsOfService: "सेवा अटी"
+    },
+    bn: {
+        heroTitle: "অ্যাগ্রিটেক ব্লগে স্বাগতম",
+        heroSubtitle: "সাম্প্রতিক কৃষি পরামর্শ, সংবাদ এবং আপডেটের জন্য আপনার উত্স।",
+        weatherTitle: "আবহাওয়ার আপডেট",
+        weatherDescription: "আপনার অঞ্চলের সর্বশেষ আবহাওয়ার পূর্বাভাস দেখুন এবং চাষের পরিকল্পনা করুন।",
+        weatherButton: "পূর্বাভাস দেখুন",
+        blogPost1Title: "টেকসই কৃষির জন্য ১০টি টিপস",
+        blogPost1Description: "এই ১০টি সহজ টিপসের মাধ্যমে টেকসই কৃষি কীভাবে করবেন শিখুন।",
+        blogPost2Title: "জৈব চাষের ভবিষ্যৎ",
+        blogPost2Description: "জৈব কৃষির ভবিষ্যৎ সম্পর্কে জানুন।",
+        readMore: "আরও পড়ুন",
+        communityTitle: "আমাদের সম্প্রদায়ে যোগ দিন",
+        communityDescription: "অন্য কৃষকদের সাথে সংযুক্ত হন, আপনার অভিজ্ঞতা শেয়ার করুন এবং বিশেষজ্ঞ পরামর্শ পান।",
+        communityButton: "ফোরাম দেখুন",
+        footerText: "© 2025 অ্যাগ্রিটেক। সর্বস্বত্ব সংরক্ষিত।",
+        privacyPolicy: "গোপনীয়তা নীতি",
+        termsOfService: "পরিষেবার শর্তাবলী"
+    },
+    gu: {
+        heroTitle: "એગ્રિટેક બ્લોગમાં આપનું સ્વાગત છે",
+        heroSubtitle: "તાજી ખેતીની ટિપ્સ, સમાચાર અને અપડેટ્સ માટે તમારું સ્ત્રોત.",
+        weatherTitle: "હવામાન અપડેટ",
+        weatherDescription: "તમારા પ્રદેશ માટે તાજેતરનું હવામાન આગાહી તપાસો અને કૃષિ યોજનાઓ બનાવો.",
+        weatherButton: "આગાહી જુઓ",
+        blogPost1Title: "સ્થાયી ખેતી માટે 10 ટિપ્સ",
+        blogPost1Description: "આ 10 સરળ ટિપ્સ સાથે કઈ રીતે ટકાઉ ખેતી કરવી તે શીખો.",
+        blogPost2Title: "સજીવ ખેતીનું ભવિષ્ય",
+        blogPost2Description: "સજીવ ખેતીનું ભવિષ્ય શોધો.",
+        readMore: "વધુ વાંચો",
+        communityTitle: "અમારા સમુદાયમાં જોડાઓ",
+        communityDescription: "અન્ય ખેડૂતો સાથે જોડાઓ, તમારો અનુભવ શેર કરો અને નિષ્ણાત સલાહ મેળવો.",
+        communityButton: "ફોરમ મુલાકાત લો",
+        footerText: "© 2025 એગ્રિટેક. સર્વ અધિકારો અનામત.",
+        privacyPolicy: "ગોપનીયતા નીતિ",
+        termsOfService: "સેવાના નિયમો"
+    },
+    pa: {
+        heroTitle: "ਐਗ੍ਰਿਟੈਕ ਬਲੌਗ ਵਿੱਚ ਤੁਹਾਡਾ ਸਵਾਗਤ ਹੈ",
+        heroSubtitle: "ਨਵੀਨਤਮ ਖੇਤੀ ਸੁਝਾਵਾਂ, ਖਬਰਾਂ ਅਤੇ ਅੱਪਡੇਟਾਂ ਲਈ ਤੁਹਾਡਾ ਸਰੋਤ.",
+        weatherTitle: "ਮੌਸਮ ਦੀ ਜਾਣਕਾਰੀ",
+        weatherDescription: "ਆਪਣੇ ਖੇਤਰ ਲਈ ਤਾਜ਼ਾ ਮੌਸਮ ਭਵਿੱਖਬਾਣੀ ਦੀ ਜਾਂਚ ਕਰੋ ਅਤੇ ਖੇਤੀ ਦੀ ਯੋਜਨਾ ਬਣਾਓ.",
+        weatherButton: "ਭਵਿੱਖਬਾਣੀ ਦੇਖੋ",
+        blogPost1Title: "ਸਥਿਰ ਖੇਤੀ ਲਈ 10 ਸੁਝਾਵ",
+        blogPost1Description: "ਇਹ 10 ਆਸਾਨ ਟਿਪਸ ਨਾਲ ਸਥਿਰ ਖੇਤੀ ਕਰਨੀ ਸਿੱਖੋ.",
+        blogPost2Title: "ਜੈਵਿਕ ਖੇਤੀ ਦਾ ਭਵਿੱਖ",
+        blogPost2Description: "ਜੈਵਿਕ ਖੇਤੀ ਦਾ ਭਵਿੱਖ ਖੋਜੋ.",
+        readMore: "ਹੋਰ ਪੜ੍ਹੋ",
+        communityTitle: "ਸਾਡੇ ਸਮੁਦਾਏ ਵਿੱਚ ਸ਼ਾਮਲ ਹੋਵੋ",
+        communityDescription: "ਹੋਰ ਕਿਸਾਨਾਂ ਨਾਲ ਜੁੜੋ, ਆਪਣੇ ਅਨੁਭਵ ਸਾਂਝੇ ਕਰੋ ਅਤੇ ਵਿਸ਼ੇਸ਼ਜ ਗਿਆਨ ਪ੍ਰਾਪਤ ਕਰੋ.",
+        communityButton: "ਫੋਰਮ ਤੇ ਜਾਓ",
+        footerText: "© 2025 ਐਗ੍ਰਿਟੈਕ. ਸਭ ਹੱਕ ਰਾਖਵੇ.",
+        privacyPolicy: "ਪਰਦੇਦਾਰੀ ਨੀਤੀ",
+        termsOfService: "ਸੇਵਾ ਦੀਆਂ ਸ਼ਰਤਾਂ"
+    }
+
+};
+
+function changeLanguage() {
+    const lang = document.querySelector('select').value;
+    document.documentElement.lang = lang;
+    const elements = document.querySelectorAll("[x-text]");
+    elements.forEach(el => {
+        const key = el.getAttribute("x-text").replace("translations[lang].", "");
+        el.textContent = translations[lang][key] || el.textContent;
+    });
+}
+
+document.addEventListener("DOMContentLoaded", function() {
+    const elements = document.querySelectorAll(".fade-in");
+    const observer = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add("visible");
+            }
+        });
+    });
+    elements.forEach(el => observer.observe(el));
+});
+
+    </script>
+</body>
+</html>

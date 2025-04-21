@@ -1,0 +1,1891 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crop Selection | AgriTech</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Enhanced color scheme and styling */
+        :root {
+            --primary-color: #059669;
+            --secondary-color: #10b981;
+            --accent-color: #34d399;
+            --gradient-start: #ecfdf5;
+            --gradient-end: #d1fae5;
+            --card-bg: rgba(255, 255, 255, 0.95);
+            --card-border: rgba(5, 150, 105, 0.2);
+            --card-shadow: rgba(5, 150, 105, 0.1);
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+            min-height: 100vh;
+        }
+
+        /* Enhanced navigation */
+        nav {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--card-border);
+        }
+
+        nav a {
+            position: relative;
+            transition: color 0.3s ease;
+        }
+
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary-color);
+            transition: width 0.3s ease;
+        }
+
+        nav a:hover::after {
+            width: 100%;
+        }
+
+        /* Enhanced header */
+        h1.text-2xl {
+            background: linear-gradient(120deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-size: 2.5rem;
+            margin: 2rem 0;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Enhanced search bar */
+        .search-container {
+            position: relative;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 1.5rem;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 1.2rem 1.5rem 1.2rem 3rem;
+            border: 2px solid rgba(5, 150, 105, 0.2);
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            font-size: 1.1rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #059669;
+            box-shadow: 0 4px 12px rgba(5, 150, 105, 0.15);
+            transform: scale(1.01);
+        }
+
+        /* Enhanced crop cards */
+        .crop-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 1.5rem;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .crop-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, transparent, rgba(52, 211, 153, 0.1), transparent);
+            transform: translateX(-100%);
+            transition: transform 0.6s;
+        }
+
+        .crop-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 20px 30px var(--card-shadow);
+            border-color: var(--accent-color);
+        }
+
+        .crop-card:hover::before {
+            transform: translateX(100%);
+        }
+
+        .crop-card img {
+            width: 64px;
+            height: 64px;
+            object-fit: cover;
+            border-radius: 50%;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .crop-card img:hover {
+            transform: scale(1.1);
+        }
+
+        .crop-card h2 {
+            color: var(--primary-color);
+            font-size: 1.25rem;
+            margin: 1rem 0;
+            transition: color 0.3s ease;
+        }
+
+        .crop-card:hover h2 {
+            color: var(--secondary-color);
+        }
+
+        .crop-description {
+            max-height: 0;
+            opacity: 0;
+            transition: all 0.4s ease;
+            overflow: hidden;
+            color: #4b5563;
+        }
+
+        .crop-card:hover .crop-description {
+            max-height: 100px;
+            opacity: 1;
+            margin-top: 0.75rem;
+        }
+
+        /* Grid layout enhancement */
+        .grid {
+            gap: 1.5rem;
+            padding: 1rem;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1rem;
+            }
+
+            h1.text-2xl {
+                font-size: 2rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Button styles */
+        .nav-button {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 9999px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(5, 150, 105, 0.2);
+        }
+
+        /* Update crop card link styles */
+        .crop-card a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .crop-card a:hover h2 {
+            color: #059669;
+        }
+
+        .crop-card:hover a h2 {
+            transform: translateY(-2px);
+        }
+    </style>
+
+    <!-- Add background pattern div -->
+    <div class="bg-pattern"></div>
+</head>
+<body class="bg-gradient-to-br from-green-100 to-blue-100 min-h-screen overflow-y-auto">
+    <!-- Simplified navbar -->
+    <nav class="bg-white shadow-md p-4 flex justify-between items-center sticky top-0 z-50">
+        <!-- Logo -->
+        <div class="flex items-center">
+            <i class="fas fa-leaf text-green-600 text-2xl"></i>
+            <span class="text-green-700 font-bold text-2xl">AgriTech</span>
+        </div>
+
+        <!-- Navigation Links -->
+        <ul class="flex space-x-6 text-gray-700">
+            <li><a href="project.html" class="hover:text-green-600">Home</a></li>
+            <li><a href="cs.html" class="hover:text-green-600">Crop Selection</a></li>
+            <li><a href="pi.html" class="hover:text-green-600">Pest Identification</a></li>
+            <li><a href="pmp.html" class="hover:text-green-600">Management</a></li>
+            <li><a href="about.html" class="hover:text-green-600">About</a></li>
+            <li><a href="contact.html" class="hover:text-green-600">Contact</a></li>
+            <li><a href="blog.html" class="hover:text-green-600">Blog</a></li>
+        </ul>
+
+        <!-- Login Button -->
+        <a href="login.html" class="login-btn px-6 py-2 bg-green-600 text-white rounded-full hover:bg-green-700">
+            <i class="fas fa-user-circle"></i>
+            <span>Login</span>
+        </a>
+
+        <!-- User Dashboard -->
+        <div id="userDashboard" class="hidden relative">
+            <button id="userMenuBtn" class="flex items-center space-x-2 bg-green-50 px-4 py-2 rounded-lg">
+                <i class="fas fa-user-circle text-green-600"></i>
+                <span id="username" class="text-green-700"></span>
+            </button>
+            <div id="userDropdown" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg">
+                <button onclick="logout()" class="w-full px-4 py-2 text-red-600 hover:bg-red-50">Logout</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Search bar positioned below navbar -->
+    <div class="search-container mx-auto px-4 py-6 bg-gradient-to-r from-emerald-50 to-green-50">
+        <input type="text" 
+               id="crop-search" 
+               class="search-input"
+               placeholder="🔍 Search for crops..."
+               autocomplete="off">
+    </div>
+
+    <div class="container mx-auto p-6">
+        <h1 class="text-2xl font-bold text-center mb-6">
+            🌾 Select Your Crop
+    </h1>
+
+    <!-- Container with updated crop cards -->
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        <!-- Example of updated crop card structure (repeat for all crops) -->
+        <div class="crop-card">
+            <img src="https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?w=800&auto=format&fit=crop" 
+                 alt="Wheat" 
+                 class="w-16 h-16 mx-auto mb-4 object-cover rounded-full">
+            <a href="https://en.wikipedia.org/wiki/Wheat" 
+               target="_blank" 
+               rel="noopener noreferrer" 
+               class="block hover:text-emerald-600 transition-colors">
+                <h2 class="text-xl font-bold text-gray-800">🌾 Wheat</h2>
+            </a>
+            <p class="crop-description">A staple cereal grain used for flour, bread, and pasta.</p>
+        </div>
+        <div class="crop-card">
+            <img src="https://images.unsplash.com/photo-1586201375761-83865001e31c?w=800&auto=format&fit=crop" 
+                 alt="Rice" 
+                 class="w-16 h-16 mx-auto mb-4 object-cover rounded-full">
+            <a href="https://en.wikipedia.org/wiki/Rice" 
+               target="_blank" 
+               rel="noopener noreferrer" 
+               class="block hover:text-emerald-600 transition-colors">
+                <h2 class="text-xl font-bold text-gray-800">🍚 Rice</h2>
+            </a>
+            <p class="crop-description">A widely cultivated grain feeding over half the world's population.</p>
+        </div>
+        <div class="crop-card">
+            <img src="https://images.unsplash.com/photo-1601593768799-76d3bc7c4a73?w=800&auto=format&fit=crop" 
+                 alt="Corn" 
+                 class="w-16 h-16 mx-auto mb-4 object-cover rounded-full">
+            <a href="https://en.wikipedia.org/wiki/Corn" 
+               target="_blank" 
+               rel="noopener noreferrer" 
+               class="block hover:text-emerald-600 transition-colors">
+                <h2 class="text-xl font-bold text-gray-800">🌽 Corn</h2>
+            </a>
+            <p class="crop-description">Used for food, fodder, and industrial purposes.</p>
+        </div>
+        <div class="crop-card">
+            <img src="https://images.unsplash.com/photo-1630563451961-ac2ff27616ab?w=800&auto=format&fit=crop" 
+                 alt="Apple" 
+                 class="w-16 h-16 mx-auto mb-4 object-cover rounded-full">
+            <a href="https://en.wikipedia.org/wiki/Apple" 
+               target="_blank" 
+               rel="noopener noreferrer" 
+               class="block hover:text-emerald-600 transition-colors">
+                <h2 class="text-xl font-bold text-gray-800">🍎 Apple</h2>
+            </a>
+            <p class="crop-description">A crisp fruit rich in fiber and vitamins.</p>
+        </div>
+        <div class="crop-card">
+            <img src="orange.jpg" alt="Orange" class="w-16 h-16 mx-auto mb-4">
+            <a href="https://en.wikipedia.org/wiki/Orange" 
+               target="_blank" 
+               rel="noopener noreferrer" 
+               class="block hover:text-emerald-600 transition-colors">
+                <h2 class="text-xl font-bold text-gray-800">🍊 Orange</h2>
+            </a>
+            <p class="crop-description">A citrus fruit high in vitamin C.</p>
+        </div>
+        <div class="crop-card">
+            <img src="grapes.jpg" alt="Grapes" class="w-16 h-16 mx-auto mb-4">
+            <a href="https://en.wikipedia.org/wiki/Grapes" 
+               target="_blank" 
+               rel="noopener noreferrer" 
+               class="block hover:text-emerald-600 transition-colors">
+                <h2 class="text-xl font-bold text-gray-800">🍇 Grapes</h2>
+            </a>
+            <p class="crop-description">Used in winemaking, jams, and fresh consumption.</p>
+        </div>
+        <div class="crop-card">
+            <img src="spinach.jpg" alt="Spinach" class="w-16 h-16 mx-auto mb-4">
+            <a href="https://en.wikipedia.org/wiki/Spinach" 
+               target="_blank" 
+               rel="noopener noreferrer" 
+               class="block hover:text-emerald-600 transition-colors">
+                <h2 class="text-xl font-bold text-gray-800">🥬 Spinach</h2>
+            </a>
+            <p class="crop-description">Packed with iron, vitamins, and fiber.</p>
+        </div>
+        <div class="crop-card">
+            <img src="banana.jpg" alt="Banana" class="w-16 h-16 mx-auto mb-4">
+            <a href="https://en.wikipedia.org/wiki/Banana" 
+               target="_blank" 
+               rel="noopener noreferrer" 
+               class="block hover:text-emerald-600 transition-colors">
+                <h2 class="text-xl font-bold text-gray-800">🍌 Banana</h2>
+            </a>
+            <p class="crop-description">A tropical fruit rich in potassium and natural sugars.</p>
+        </div>
+        <div class="crop-card">
+            <img src="potato.jpg" alt="Potato" class="w-16 h-16 mx-auto mb-4">
+            <a href="https://en.wikipedia.org/wiki/Potato" 
+               target="_blank" 
+               rel="noopener noreferrer" 
+               class="block hover:text-emerald-600 transition-colors">
+                <h2 class="text-xl font-bold text-gray-800">🥔 Potato</h2>
+            </a>
+            <p class="crop-description">A root vegetable used in countless dishes.</p>
+        </div>
+        <div class="crop-card">
+            <img src="cabbage.jpg" alt="Cabbage" class="w-16 h-16 mx-auto mb-4">
+            <a href="https://en.wikipedia.org/wiki/Cabbage" 
+               target="_blank" 
+               rel="noopener noreferrer" 
+               class="block hover:text-emerald-600 transition-colors">
+                <h2 class="text-xl font-bold text-gray-800">🥦 Cabbage</h2>
+            </a>
+            <p class="crop-description">Used in salads, stir-fries, and soups.</p>
+        </div>
+        <div class="crop-card">
+            <img src="tomato.jpg" alt="Tomato" class="w-16 h-16 mx-auto mb-4">
+            <a href="https://en.wikipedia.org/wiki/Tomato" 
+               target="_blank" 
+               rel="noopener noreferrer" 
+               class="block hover:text-emerald-600 transition-colors">
+                <h2 class="text-xl font-bold text-gray-800">🍅 Tomato</h2>
+            </a>
+            <p class="crop-description">Used in sauces, salads, and soups.</p>
+        </div>
+        <div class="crop-card">
+            <img src="carrot.jpg" alt="Carrot" class="w-16 h-16 mx-auto mb-4">
+            <a href="https://en.wikipedia.org/wiki/Carrot" 
+               target="_blank" 
+               rel="noopener noreferrer" 
+               class="block hover:text-emerald-600 transition-colors">
+                <h2 class="text-xl font-bold text-gray-800">🥕 Carrot</h2>
+            </a>
+            <p class="crop-description">A root vegetable rich in vitamin A.</p>
+        </div>
+        <div class="crop-card">
+            <img src="onion.jpg" alt="Onion" class="w-16 h-16 mx-auto mb-4">
+            <a href="https://en.wikipedia.org/wiki/Onion" 
+               target="_blank" 
+               rel="noopener noreferrer" 
+               class="block hover:text-emerald-600 transition-colors">
+                <h2 class="text-xl font-bold text-gray-800">🧅 Onion</h2>
+            </a>
+            <p class="crop-description">Adds flavor to many dishes.</p>
+        </div>
+        <div class="crop-card">
+            <img src="garlic.jpg" alt="Garlic" class="w-16 h-16 mx-auto mb-4">
+            <a href="https://en.wikipedia.org/wiki/Garlic" 
+               target="_blank" 
+               rel="noopener noreferrer" 
+               class="block hover:text-emerald-600 transition-colors">
+                <h2 class="text-xl font-bold text-gray-800">🧄 Garlic</h2>
+            </a>
+            <p class="crop-description">Known for its strong aroma and medicinal properties.</p>
+        </div>
+        <div class="crop-card">
+            <img src="pepper.jpg" alt="Pepper" class="w-16 h-16 mx-auto mb-4">
+            <a href="https://en.wikipedia.org/wiki/Pepper" 
+               target="_blank" 
+               rel="noopener noreferrer" 
+               class="block hover:text-emerald-600 transition-colors">
+                <h2 class="text-xl font-bold text-gray-800">🌶️ Pepper</h2>
+            </a>
+            <p class="crop-description">Adds heat and spice to dishes.</p>
+        </div>
+        <div class="crop-card">
+            <img src="mango.jpg" alt="Mango" class="w-16 h-16 mx-auto mb-4">
+            <a href="https://en.wikipedia.org/wiki/Mango" 
+               target="_blank" 
+               rel="noopener noreferrer" 
+               class="block hover:text-emerald-600 transition-colors">
+                <h2 class="text-xl font-bold text-gray-800">🥭 Mango</h2>
+            </a>
+            <p class="crop-description">A tropical fruit known for its sweetness.</p>
+        </div>
+        <div class="crop-card">
+            <img src="strawberry.jpg" alt="Strawberry" class="w-16 h-16 mx-auto mb-4">
+            <a href="https://en.wikipedia.org/wiki/Strawberry" 
+               target="_blank" 
+               rel="noopener noreferrer" 
+               class="block hover:text-emerald-600 transition-colors">
+                <h2 class="text-xl font-bold text-gray-800">🍓 Strawberry</h2>
+            </a>
+            <p class="crop-description">A juicy, sweet fruit rich in vitamin C.</p>
+        </div>
+        <div class="crop-card">
+            <img src="cashew.jpg" alt="Cashew" class="w-16 h-16 mx-auto mb-4">
+            <a href="https://en.wikipedia.org/wiki/Cashew" 
+               target="_blank" 
+               rel="noopener noreferrer" 
+               class="block hover:text-emerald-600 transition-colors">
+                <h2 class="text-xl font-bold text-gray-800">🌰 Cashew</h2>
+            </a>
+            <p class="crop-description">A nut used for snacks and cooking, rich in healthy fats.</p>
+        </div>
+        <div class="crop-card">
+            <img src="almond.jpg" alt="Almond" class="w-16 h-16 mx-auto mb-4">
+            <a href="https://en.wikipedia.org/wiki/Almond" 
+               target="_blank" 
+               rel="noopener noreferrer" 
+               class="block hover:text-emerald-600 transition-colors">
+                <h2 class="text-xl font-bold text-gray-800">🌰 Almond</h2>
+            </a>
+            <p class="crop-description">A nutritious nut packed with protein and healthy fats.</p>
+        </div>
+        <div class="crop-card">
+            <img src="cherry.jpg" alt="Cherry" class="w-16 h-16 mx-auto mb-4">
+            <a href="https://en.wikipedia.org/wiki/Cherry" 
+               target="_blank" 
+               rel="noopener noreferrer" 
+               class="block hover:text-emerald-600 transition-colors">
+                <h2 class="text-xl font-bold text-gray-800">🍒 Cherry</h2>
+            </a>
+            <p class="crop-description">A small, juicy fruit with a sweet or tart flavor.</p>
+        </div>
+        <div class="crop-card">
+            <img src="peach.jpg" alt="Peach" class="w-16 h-16 mx-auto mb-4">
+            <a href="https://en.wikipedia.org/wiki/Peach" 
+               target="_blank" 
+               rel="noopener noreferrer" 
+               class="block hover:text-emerald-600 transition-colors">
+                <h2 class="text-xl font-bold text-gray-800">🍑 Peach</h2>
+            </a>
+            <p class="crop-description">A juicy fruit with a soft, fuzzy skin and sweet taste.</p>
+        </div>
+        <div class="crop-card">
+            <img src="pear.jpg" alt="Pear" class="w-16 h-16 mx-auto mb-4">
+            <a href="https://en.wikipedia.org/wiki/Pear" 
+               target="_blank" 
+               rel="noopener noreferrer" 
+               class="block hover:text-emerald-600 transition-colors">
+                <h2 class="text-xl font-bold text-gray-800">🍐 Pear</h2>
+            </a>
+            <p class="crop-description">A soft, juicy fruit with a mild, sweet flavor.</p>
+        </div>
+        <div class="crop-card">
+            <img src="fig.jpg" alt="Fig" class="w-16 h-16 mx-auto mb-4">
+            <a href="https://en.wikipedia.org/wiki/Fig" 
+               target="_blank" 
+               rel="noopener noreferrer" 
+               class="block hover:text-emerald-600 transition-colors">
+                <h2 class="text-xl font-bold text-gray-800">🍈 Fig</h2>
+            </a>
+            <p class="crop-description">A small, sweet fruit with edible seeds, often dried.</p>
+        </div>
+        <div class="crop-card">
+            <img src="olive.jpg" alt="Olive" class="w-16 h-16 mx-auto mb-4">
+            <a href="https://en.wikipedia.org/wiki/Olive" 
+               target="_blank" 
+               rel="noopener noreferrer" 
+               class="block hover:text-emerald-600 transition-colors">
+                <h2 class="text-xl font-bold text-gray-800">🫒 Olive</h2>
+            </a>
+            <p class="crop-description">A Mediterranean fruit used in oils and salads.</p>
+        </div>
+        <div class="crop-card">
+            <img src="barley.jpg" alt="Barley" class="w-16 h-16 mx-auto mb-4">
+            <a href="https://en.wikipedia.org/wiki/Barley" 
+               target="_blank" 
+               rel="noopener noreferrer" 
+               class="block hover:text-emerald-600 transition-colors">
+                <h2 class="text-xl font-bold text-gray-800">🌾 Barley</h2>
+            </a>
+            <p class="crop-description">A cereal grain used in food and brewing.</p>
+        </div>
+        <div class="crop-card">
+            <img src="millet.jpg" alt="Millet" class="w-16 h-16 mx-auto mb-4">
+            <a href="https://en.wikipedia.org/wiki/Millet" 
+               target="_blank" 
+               rel="noopener noreferrer" 
+               class="block hover:text-emerald-600 transition-colors">
+                <h2 class="text-xl font-bold text-gray-800">🌾 Millet</h2>
+            </a>
+            <p class="crop-description">A drought-resistant grain used in many traditional dishes.</p>
+        </div>
+        <div class="crop-card">
+            <img src="sorghum.jpg" alt="Sorghum" class="w-16 h-16 mx-auto mb-4">
+            <a href="https://en.wikipedia.org/wiki/Sorghum" 
+               target="_blank" 
+               rel="noopener noreferrer" 
+               class="block hover:text-emerald-600 transition-colors">
+                <h2 class="text-xl font-bold text-gray-800">🌾 Sorghum</h2>
+            </a>
+            <p class="crop-description">A versatile grain used for food, fodder, and biofuels.</p>
+        </div>
+        <div class="crop-card">
+            <img src="walnut.jpg" alt="Walnut" class="w-16 h-16 mx-auto mb-4">
+            <a href="https://en.wikipedia.org/wiki/Walnut" 
+               target="_blank" 
+               rel="noopener noreferrer" 
+               class="block hover:text-emerald-600 transition-colors">
+                <h2 class="text-xl font-bold text-gray-800">🌰 Walnut</h2>
+            </a>
+            <p class="crop-description">A nutrient-rich nut known for its brain-boosting benefits.</p>
+        </div>
+        <div class="crop-card">
+            <img src="pistachio.jpg" alt="Pistachio" class="w-16 h-16 mx-auto mb-4">
+            <a href="https://en.wikipedia.org/wiki/Pistachio" 
+               target="_blank" 
+               rel="noopener noreferrer" 
+               class="block hover:text-emerald-600 transition-colors">
+                <h2 class="text-xl font-bold text-gray-800">🌰 Pistachio</h2>
+            </a>
+            <p class="crop-description">A delicious green nut enjoyed as a snack.</p>
+        </div>
+        <div class="crop-card">
+            <img src="beetroot.jpg" alt="Beetroot" class="w-16 h-16 mx-auto mb-4">
+            <a href="https://en.wikipedia.org/wiki/Beetroot" 
+               target="_blank" 
+               rel="noopener noreferrer" 
+               class="block hover:text-emerald-600 transition-colors">
+                <h2 class="text-xl font-bold text-gray-800">🍠 Beetroot</h2>
+            </a>
+            <p class="crop-description">A root vegetable known for its deep red color and nutrients.</p>
+        </div>
+        <div class="crop-card">
+            <img src="blackberry.jpg" alt="Blackberry" class="w-16 h-16 mx-auto mb-4">
+            <a href="https://en.wikipedia.org/wiki/Blackberry" 
+               target="_blank" 
+               rel="noopener noreferrer" 
+               class="block hover:text-emerald-600 transition-colors">
+                <h2 class="text-xl font-bold text-gray-800">🍇 Blackberry</h2>
+            </a>
+            <p class="crop-description">A small, juicy berry packed with antioxidants.</p>
+        </div>
+        <div class="crop-card">
+            <img src="blueberry.jpg" alt="Blueberry" class="w-16 h-16 mx-auto mb-4">
+            <a href="https://en.wikipedia.org/wiki/Blueberry" 
+               target="_blank" 
+               rel="noopener noreferrer" 
+               class="block hover:text-emerald-600 transition-colors">
+                <h2 class="text-xl font-bold text-gray-800">🫐 Blueberry</h2>
+            </a>
+            <p class="crop-description">A nutrient-rich berry known for its health benefits.</p>
+        </div>
+        <div class="crop-card">
+            <img src="cranberry.jpg" alt="Cranberry" class="w-16 h-16 mx-auto mb-4">
+            <a href="https://en.wikipedia.org/wiki/Cranberry" 
+               target="_blank" 
+               rel="noopener noreferrer" 
+               class="block hover:text-emerald-600 transition-colors">
+                <h2 class="text-xl font-bold text-gray-800">🍒 Cranberry</h2>
+            </a>
+            <p class="crop-description">A tart berry known for its medicinal benefits.</p>
+        </div>
+        <div class="crop-card">
+            <img src="lychee.jpg" alt="Lychee" class="w-16 h-16 mx-auto mb-4">
+            <a href="https://en.wikipedia.org/wiki/Lychee" 
+               target="_blank" 
+               rel="noopener noreferrer" 
+               class="block hover:text-emerald-600 transition-colors">
+                <h2 class="text-xl font-bold text-gray-800">🍒 Lychee</h2>
+            </a>
+            <p class="crop-description">A tropical fruit with a sweet and floral flavor.</p>
+        </div>
+        <div class="crop-card">
+            <img src="date.jpg" alt="Date" class="w-16 h-16 mx-auto mb-4">
+            <a href="https://en.wikipedia.org/wiki/Date" 
+               target="_blank" 
+               rel="noopener noreferrer" 
+               class="block hover:text-emerald-600 transition-colors">
+                <h2 class="text-xl font-bold text-gray-800">🌴 Date</h2>
+            </a>
+            <p class="crop-description">A sweet, chewy fruit grown in deserts.</p>
+        </div>
+        <div class="crop-card">
+            <img src="avocado.jpg" alt="Avocado" class="w-16 h-16 mx-auto mb-4">
+            <a href="https://en.wikipedia.org/wiki/Avocado" 
+               target="_blank" 
+               rel="noopener noreferrer" 
+               class="block hover:text-emerald-600 transition-colors">
+                <h2 class="text-xl font-bold text-gray-800">🥑 Avocado</h2>
+            </a>
+            <p class="crop-description">A nutrient-rich fruit known for its healthy fats.</p>
+        </div>
+        <div class="crop-card">
+            <img src="pineapple.jpg" alt="Pineapple" class="w-16 h-16 mx-auto mb-4">
+            <a href="https://en.wikipedia.org/wiki/Pineapple" 
+               target="_blank" 
+               rel="noopener noreferrer" 
+               class="block hover:text-emerald-600 transition-colors">
+                <h2 class="text-xl font-bold text-gray-800">🍍 Pineapple</h2>
+            </a>
+            <p class="crop-description">A tropical fruit with a sweet and tangy taste.</p>
+        </div>
+        <div class="crop-card">
+            <img src="coconut.jpg" alt="Coconut" class="w-16 h-16 mx-auto mb-4">
+            <a href="https://en.wikipedia.org/wiki/Coconut" 
+               target="_blank" 
+               rel="noopener noreferrer" 
+               class="block hover:text-emerald-600 transition-colors">
+                <h2 class="text-xl font-bold text-gray-800">🥥 Coconut</h2>
+            </a>
+            <p class="crop-description">A versatile fruit used for water, milk, and oil.</p>
+        </div>
+        <div class="crop-card">
+            <img src="plum.jpg" alt="Plum" class="w-16 h-16 mx-auto mb-4">
+            <a href="https://en.wikipedia.org/wiki/Plum" 
+               target="_blank" 
+               rel="noopener noreferrer" 
+               class="block hover:text-emerald-600 transition-colors">
+                <h2 class="text-xl font-bold text-gray-800">🍑 Plum</h2>
+            </a>
+            <p class="crop-description">A juicy fruit with a sweet-tart flavor.</p>
+        </div>
+        <div class="crop-card">
+            <img src="raspberry.jpg" alt="Raspberry" class="w-16 h-16 mx-auto mb-4">
+            <a href="https://en.wikipedia.org/wiki/Raspberry" 
+               target="_blank" 
+               rel="noopener noreferrer" 
+               class="block hover:text-emerald-600 transition-colors">
+                <h2 class="text-xl font-bold text-gray-800">🍇 Raspberry</h2>
+            </a>
+            <p class="crop-description">A small, delicate berry rich in antioxidants.</p>
+        </div>
+        <div class="crop-card">
+            <img src="gooseberry.jpg" alt="Gooseberry" class="w-16 h-16 mx-auto mb-4">
+            <a href="https://en.wikipedia.org/wiki/Gooseberry" 
+               target="_blank" 
+               rel="noopener noreferrer" 
+               class="block hover:text-emerald-600 transition-colors">
+                <h2 class="text-xl font-bold text-gray-800">🍏 Gooseberry</h2>
+            </a>
+            <p class="crop-description">A tart fruit packed with vitamin C.</p>
+        </div>
+        <div class="crop-card">
+            <img src="guava.jpg" alt="Guava" class="w-16 h-16 mx-auto mb-4">
+            <a href="https://en.wikipedia.org/wiki/Guava" 
+               target="_blank" 
+               rel="noopener noreferrer" 
+               class="block hover:text-emerald-600 transition-colors">
+                <h2 class="text-xl font-bold text-gray-800">🍐 Guava</h2>
+            </a>
+            <p class="crop-description">A tropical fruit with a sweet, fragrant taste.</p>
+        </div>
+        <div class="crop-card">
+            <img src="jackfruit.jpg" alt="Jackfruit" class="w-16 h-16 mx-auto mb-4">
+            <a href="https://en.wikipedia.org/wiki/Jackfruit" 
+               target="_blank" 
+               rel="noopener noreferrer" 
+               class="block hover:text-emerald-600 transition-colors">
+                <h2 class="text-xl font-bold text-gray-800">🍈 Jackfruit</h2>
+            </a>
+            <p class="crop-description">The largest tree fruit in the world, with a sweet flavor.</p>
+        </div>
+        <div class="crop-card">
+            <img src="dragon_fruit.jpg" alt="Dragon Fruit" class="w-16 h-16 mx-auto mb-4">
+            <a href="https://en.wikipedia.org/wiki/Dragon_fruit" 
+               target="_blank" 
+               rel="noopener noreferrer" 
+               class="block hover:text-emerald-600 transition-colors">
+                <h2 class="text-xl font-bold text-gray-800">🐉🍈 Dragon Fruit</h2>
+            </a>
+            <p class="crop-description">A visually striking fruit with a mild, sweet taste.</p>
+        </div>
+        <div class="crop-card">
+            <img src="passion_fruit.jpg" alt="Passion Fruit" class="w-16 h-16 mx-auto mb-4">
+            <a href="https://en.wikipedia.org/wiki/Passion_fruit" 
+               target="_blank" 
+               rel="noopener noreferrer" 
+               class="block hover:text-emerald-600 transition-colors">
+                <h2 class="text-xl font-bold text-gray-800">🍋 Passion Fruit</h2>
+            </a>
+            <p class="crop-description">A tangy fruit with a unique aroma.</p>
+        </div>
+        <div class="crop-card">
+            <img src="zucchini.jpg" alt="Zucchini" class="w-16 h-16 mx-auto mb-4">
+            <a href="https://en.wikipedia.org/wiki/Zucchini" 
+               target="_blank" 
+               rel="noopener noreferrer" 
+               class="block hover:text-emerald-600 transition-colors">
+                <h2 class="text-xl font-bold text-gray-800">🥒 Zucchini</h2>
+            </a>
+            <p class="crop-description">A versatile vegetable used in salads, stir-fries, and grilling.</p>
+        </div>
+        <div class="crop-card">
+            <img src="bell_pepper.jpg" alt="Bell Pepper" class="w-16 h-16 mx-auto mb-4">
+            <a href="https://en.wikipedia.org/wiki/Bell_pepper" 
+               target="_blank" 
+               rel="noopener noreferrer" 
+               class="block hover:text-emerald-600 transition-colors">
+                <h2 class="text-xl font-bold text-gray-800">🫑 Bell Pepper</h2>
+            </a>
+            <p class="crop-description">A colorful vegetable rich in vitamins and antioxidants.</p>
+        </div>
+        <div class="crop-card">
+            <img src="eggplant.jpg" alt="Eggplant" class="w-16 h-16 mx-auto mb-4">
+            <a href="https://en.wikipedia.org/wiki/Eggplant" 
+               target="_blank" 
+               rel="noopener noreferrer" 
+               class="block hover:text-emerald-600 transition-colors">
+                <h2 class="text-xl font-bold text-gray-800">🍆 Eggplant (Brinjal)</h2>
+            </a>
+            <p class="crop-description">A nutritious vegetable used in curries, grilling, and baking.</p>
+        </div>
+        <div class="crop-card">
+            <img src="radish.jpg" alt="Radish" class="w-16 h-16 mx-auto mb-4">
+            <a href="https://en.wikipedia.org/wiki/Radish" 
+               target="_blank" 
+               rel="noopener noreferrer" 
+               class="block hover:text-emerald-600 transition-colors">
+                <h2 class="text-xl font-bold text-gray-800">🌱 Radish</h2>
+            </a>
+            <p class="crop-description">A crunchy root vegetable with a peppery taste.</p>
+        </div>
+        <div class="crop-card">
+            <img src="broccoli.jpg" alt="Broccoli" class="w-16 h-16 mx-auto mb-4">
+            <a href="https://en.wikipedia.org/wiki/Broccoli" 
+               target="_blank" 
+               rel="noopener noreferrer" 
+               class="block hover:text-emerald-600 transition-colors">
+                <h2 class="text-xl font-bold text-gray-800">🥦 Broccoli</h2>
+            </a>
+            <p class="crop-description">A nutrient-dense vegetable high in fiber and vitamins.</p>
+        </div>
+        <div class="crop-card">
+            <img src="cauliflower.jpg" alt="Cauliflower" class="w-16 h-16 mx-auto mb-4">
+            <a href="https://en.wikipedia.org/wiki/Cauliflower" 
+               target="_blank" 
+               rel="noopener noreferrer" 
+               class="block hover:text-emerald-600 transition-colors">
+                <h2 class="text-xl font-bold text-gray-800">🥦 Cauliflower</h2>
+            </a>
+            <p class="crop-description">A cruciferous vegetable used in multiple dishes.</p>
+        </div>
+        <div class="crop-card">
+            <img src="celery.jpg" alt="Celery" class="w-16 h-16 mx-auto mb-4">
+            <a href="https://en.wikipedia.org/wiki/Celery" 
+               target="_blank" 
+               rel="noopener noreferrer" 
+               class="block hover:text-emerald-600 transition-colors">
+                <h2 class="text-xl font-bold text-gray-800">🌿 Celery</h2>
+            </a>
+            <p class="crop-description">A crunchy, low-calorie vegetable used in salads and soups.</p>
+        </div>
+        <div class="crop-card">
+            <img src="asparagus.jpg" alt="Asparagus" class="w-16 h-16 mx-auto mb-4">
+            <a href="https://en.wikipedia.org/wiki/Asparagus" 
+               target="_blank" 
+               rel="noopener noreferrer" 
+               class="block hover:text-emerald-600 transition-colors">
+                <h2 class="text-xl font-bold text-gray-800">🌱 Asparagus</h2>
+            </a>
+            <p class="crop-description">A tender vegetable rich in antioxidants and fiber.</p>
+        </div>
+        <div class="crop-card">
+            <img src="leek.jpg" alt="Leek" class="w-16 h-16 mx-auto mb-4">
+            <a href="https://en.wikipedia.org/wiki/Leek" 
+               target="_blank" 
+               rel="noopener noreferrer" 
+               class="block hover:text-emerald-600 transition-colors">
+                <h2 class="text-xl font-bold text-gray-800">🧅 Leek</h2>
+            </a>
+            <p class="crop-description">A mild onion-like vegetable used in soups and stews.</p>
+        </div>
+        <div class="crop-card">
+            <img src="okra.jpg" alt="Okra" class="w-16 h-16 mx-auto mb-4">
+            <a href="https://en.wikipedia.org/wiki/Okra" 
+               target="_blank" 
+               rel="noopener noreferrer" 
+               class="block hover:text-emerald-600 transition-colors">
+                <h2 class="text-xl font-bold text-gray-800">🌱 Okra (Ladyfinger)</h2>
+            </a>
+            <p class="crop-description">A green vegetable used in curries, soups, and stir-fries.</p>
+        </div>
+        <div class="crop-card">
+            <img src="kale.jpg" alt="Kale" class="w-16 h-16 mx-auto mb-4">
+            <a href="https://en.wikipedia.org/wiki/Kale" 
+               target="_blank" 
+               rel="noopener noreferrer" 
+               class="block hover:text-emerald-600 transition-colors">
+                <h2 class="text-xl font-bold text-gray-800">🥬 Kale</h2>
+            </a>
+            <p class="crop-description">A superfood rich in vitamins, fiber, and antioxidants.</p>
+        </div>
+        <div class="crop-card">
+            <img src="turnip.jpg" alt="Turnip" class="w-16 h-16 mx-auto mb-4">
+            <a href="https://en.wikipedia.org/wiki/Turnip" 
+               target="_blank" 
+               rel="noopener noreferrer" 
+               class="block hover:text-emerald-600 transition-colors">
+                <h2 class="text-xl font-bold text-gray-800">🌱 Turnip</h2>
+            </a>
+            <p class="crop-description">A root vegetable used in soups and stews.</p>
+        </div>
+        <div class="crop-card">
+            <img src="sweet_potato.jpg" alt="Sweet Potato" class="w-16 h-16 mx-auto mb-4">
+            <a href="https://en.wikipedia.org/wiki/Sweet_potato" 
+               target="_blank" 
+               rel="noopener noreferrer" 
+               class="block hover:text-emerald-600 transition-colors">
+                <h2 class="text-xl font-bold text-gray-800">🍠 Sweet Potato</h2>
+            </a>
+            <p class="crop-description">A nutritious root vegetable high in fiber and vitamins.</p>
+        </div>
+        <div class="crop-card">
+            <img src="artichoke.jpg" alt="Artichoke" class="w-16 h-16 mx-auto mb-4">
+            <a href="https://en.wikipedia.org/wiki/Artichoke" 
+               target="_blank" 
+               rel="noopener noreferrer" 
+               class="block hover:text-emerald-600 transition-colors">
+                <h2 class="text-xl font-bold text-gray-800">🌿 Artichoke</h2>
+            </a>
+            <p class="crop-description">A unique vegetable known for its edible flower buds.</p>
+        </div>
+        <div class="crop-card">
+            <img src="fennel.jpg" alt="Fennel" class="w-16 h-16 mx-auto mb-4">
+            <a href="https://en.wikipedia.org/wiki/Fennel" 
+               target="_blank" 
+               rel="noopener noreferrer" 
+               class="block hover:text-emerald-600 transition-colors">
+                <h2 class="text-xl font-bold text-gray-800">🌿 Fennel</h2>
+            </a>
+            <p class="crop-description">A flavorful vegetable used for both culinary and medicinal purposes.</p>
+        </div>
+        <div class="crop-card">
+            <img src="cantaloupe.jpg" alt="Cantaloupe" class="w-16 h-16 mx-auto mb-4">
+            <a href="https://en.wikipedia.org/wiki/Cantaloupe" 
+               target="_blank" 
+               rel="noopener noreferrer" 
+               class="block hover:text-emerald-600 transition-colors">
+                <h2 class="text-xl font-bold text-gray-800">🍈 Cantaloupe</h2>
+            </a>
+            <p class="crop-description">A sweet and juicy melon rich in vitamins A and C.</p>
+        </div>
+        <div class="crop-card">
+            <img src="honeydew.jpg" alt="Honeydew Melon" class="w-16 h-16 mx-auto mb-4">
+            <a href="https://en.wikipedia.org/wiki/Honeydew" 
+               target="_blank" 
+               rel="noopener noreferrer" 
+               class="block hover:text-emerald-600 transition-colors">
+                <h2 class="text-xl font-bold text-gray-800">🍈 Honeydew Melon</h2>
+            </a>
+            <p class="crop-description">A refreshing melon with a smooth green flesh.</p>
+        </div>
+        <div class="crop-card">
+            <img src="tangerine.jpg" alt="Tangerine" class="w-16 h-16 mx-auto mb-4">
+            <a href="https://en.wikipedia.org/wiki/Tangerine" 
+               target="_blank" 
+               rel="noopener noreferrer" 
+               class="block hover:text-emerald-600 transition-colors">
+                <h2 class="text-xl font-bold text-gray-800">🍊 Tangerine</h2>
+            </a>
+            <p class="crop-description">A citrus fruit with a sweet and tangy flavor.</p>
+        </div>
+        <div class="crop-card">
+            <img src="kiwi.jpg" alt="Kiwi" class="w-16 h-16 mx-auto mb-4">
+            <a href="https://en.wikipedia.org/wiki/Kiwi" 
+               target="_blank" 
+               rel="noopener noreferrer" 
+               class="block hover:text-emerald-600 transition-colors">
+                <h2 class="text-xl font-bold text-gray-800">🥝 Kiwi</h2>
+            </a>
+            <p class="crop-description">A small fruit with a vibrant green flesh and rich nutrients.</p>
+        </div>
+        <div class="crop-card">
+            <img src="cactus-pear.jpg" alt="Cactus Pear" class="w-16 h-16 mx-auto mb-4">
+            <a href="https://en.wikipedia.org/wiki/Cactus_pear" 
+               target="_blank" 
+               rel="noopener noreferrer" 
+               class="block hover:text-emerald-600 transition-colors">
+                <h2 class="text-xl font-bold text-gray-800">🌵🍐 Cactus Pear</h2>
+            </a>
+            <p class="crop-description">A unique fruit from cactus plants with a sweet taste.</p>
+        </div>
+        <div class="crop-card">
+            <img src="boysenberry.jpg" alt="Boysenberry" class="w-16 h-16 mx-auto mb-4">
+            <a href="https://en.wikipedia.org/wiki/Boysenberry" 
+               target="_blank" 
+               rel="noopener noreferrer" 
+               class="block hover:text-emerald-600 transition-colors">
+                <h2 class="text-xl font-bold text-gray-800">🍇 Boysenberry</h2>
+            </a>
+            <p class="crop-description">A cross between blackberry, raspberry, and loganberry.</p>
+        </div>
+        <div class="crop-card">
+            <img src="elderberry.jpg" alt="Elderberry" class="w-16 h-16 mx-auto mb-4">
+            <a href="https://en.wikipedia.org/wiki/Elderberry" 
+               target="_blank" 
+               rel="noopener noreferrer" 
+               class="block hover:text-emerald-600 transition-colors">
+                <h2 class="text-xl font-bold text-gray-800">🍇 Elderberry</h2>
+            </a>
+            <p class="crop-description">A berry known for its medicinal and antioxidant properties.</p>
+        </div>
+        <div class="crop-card">
+            <img src="mulberry.jpg" alt="Mulberry" class="w-16 h-16 mx-auto mb-4">
+            <a href="https://en.wikipedia.org/wiki/Mulberry" 
+               target="_blank" 
+               rel="noopener noreferrer" 
+               class="block hover:text-emerald-600 transition-colors">
+                <h2 class="text-xl font-bold text-gray-800">🍇 Mulberry</h2>
+            </a>
+            <p class="crop-description">A sweet, nutritious berry enjoyed fresh or dried.</p>
+        </div>
+        <div class="crop-card">
+            <img src="starfruit.jpg" alt="Starfruit" class="w-16 h-16 mx-auto mb-4">
+            <a href="https://en.wikipedia.org/wiki/Starfruit" 
+               target="_blank" 
+               rel="noopener noreferrer" 
+               class="block hover:text-emerald-600 transition-colors">
+                <h2 class="text-xl font-bold text-gray-800">⭐🍈 Starfruit (Carambola)</h2>
+            </a>
+            <p class="crop-description">A tropical fruit with a star shape and tangy taste.</p>
+        </div>
+        <div class="crop-card">
+            <img src="persimmon.jpg" alt="Persimmon" class="w-16 h-16 mx-auto mb-4">
+            <a href="https://en.wikipedia.org/wiki/Persimmon" 
+               target="_blank" 
+               rel="noopener noreferrer" 
+               class="block hover:text-emerald-600 transition-colors">
+                <h2 class="text-xl font-bold text-gray-800">🍊 Persimmon</h2>
+            </a>
+            <p class="crop-description">A sweet, orange fruit enjoyed fresh or dried.</p>
+        </div>
+        <div class="crop-card">
+            <img src="sapodilla.jpg" alt="Sapodilla" class="w-16 h-16 mx-auto mb-4">
+            <a href="https://en.wikipedia.org/wiki/Sapodilla" 
+               target="_blank" 
+               rel="noopener noreferrer" 
+               class="block hover:text-emerald-600 transition-colors">
+                <h2 class="text-xl font-bold text-gray-800">🍪 Sapodilla (Chikoo)</h2>
+            </a>
+            <p class="crop-description">A soft, brown fruit with a sweet, malty flavor.</p>
+        </div>
+        <div class="crop-card">
+            <img src="loquat.jpg" alt="Loquat" class="w-16 h-16 mx-auto mb-4">
+            <a href="https://en.wikipedia.org/wiki/Loquat" 
+               target="_blank" 
+               rel="noopener noreferrer" 
+               class="block hover:text-emerald-600 transition-colors">
+                <h2 class="text-xl font-bold text-gray-800">🍏 Loquat</h2>
+            </a>
+            <p class="crop-description">A small, yellow-orange fruit with a sweet-tart flavor.</p>
+        </div>
+        <div class="crop-card">
+            <img src="jujube.jpg" alt="Jujube" class="w-16 h-16 mx-auto mb-4">
+            <a href="https://en.wikipedia.org/wiki/Jujube" 
+               target="_blank" 
+               rel="noopener noreferrer" 
+               class="block hover:text-emerald-600 transition-colors">
+                <h2 class="text-xl font-bold text-gray-800">🍎 Jujube (Ber Fruit)</h2>
+            </a>
+            <p class="crop-description">A chewy fruit with a date-like taste.</p>
+        </div>
+        <div class="crop-card">
+            <img src="rambutan.jpg" alt="Rambutan" class="w-16 h-16 mx-auto mb-4">
+            <a href="https://en.wikipedia.org/wiki/Rambutan" 
+               target="_blank" 
+               rel="noopener noreferrer" 
+               class="block hover:text-emerald-600 transition-colors">
+                <h2 class="text-xl font-bold text-gray-800">🍒 Rambutan</h2>
+            </a>
+            <p class="crop-description">A tropical fruit similar to lychee with a juicy interior.</p>
+        </div>
+        <div class="crop-card">
+            <img src="cupuacu.jpg" alt="Cupuacu" class="w-16 h-16 mx-auto mb-4">
+            <a href="https://en.wikipedia.org/wiki/Cupuacu" 
+               target="_blank" 
+               rel="noopener noreferrer" 
+               class="block hover:text-emerald-600 transition-colors">
+                <h2 class="text-xl font-bold text-gray-800">🍫 Cupuacu</h2>
+            </a>
+            <p class="crop-description">A cacao-related fruit with a creamy pulp and tropical flavor.</p>
+        </div>
+        <div class="crop-card">
+            <img src="quinoa.jpg" alt="Quinoa" class="w-16 h-16 mx-auto mb-4">
+            <a href="https://en.wikipedia.org/wiki/Quinoa" 
+               target="_blank" 
+               rel="noopener noreferrer" 
+               class="block hover:text-emerald-600 transition-colors">
+                <h2 class="text-xl font-bold text-gray-800">🌾 Quinoa</h2>
+            </a>
+            <p class="crop-description">A protein-rich grain known for its high nutritional value.</p>
+        </div>
+        <div class="crop-card">
+            <img src="buckwheat.jpg" alt="Buckwheat" class="w-16 h-16 mx-auto mb-4">
+            <a href="https://en.wikipedia.org/wiki/Buckwheat" 
+               target="_blank" 
+               rel="noopener noreferrer" 
+               class="block hover:text-emerald-600 transition-colors">
+                <h2 class="text-xl font-bold text-gray-800">🌾 Buckwheat</h2>
+            </a>
+            <p class="crop-description">A gluten-free grain rich in antioxidants.</p>
+        </div>
+        <div class="crop-card">
+            <img src="rye.jpg" alt="Rye" class="w-16 h-16 mx-auto mb-4">
+            <a href="https://en.wikipedia.org/wiki/Rye" 
+               target="_blank" 
+               rel="noopener noreferrer" 
+               class="block hover:text-emerald-600 transition-colors">
+                <h2 class="text-xl font-bold text-gray-800">🌾 Rye</h2>
+            </a>
+            <p class="crop-description">A hearty grain used for bread and whiskey production.</p>
+        </div>
+        <div class="crop-card">
+            <img src="oats.jpg" alt="Oats" class="w-16 h-16 mx-auto mb-4">
+            <a href="https://en.wikipedia.org/wiki/Oats" 
+               target="_blank" 
+               rel="noopener noreferrer" 
+               class="block hover:text-emerald-600 transition-colors">
+                <h2 class="text-xl font-bold text-gray-800">🌾 Oats</h2>
+            </a>
+            <p class="crop-description">A fiber-rich grain commonly used in breakfast cereals.</p>
+        </div>
+        <div class="crop-card">
+            <img src="chickling_pea.jpg" alt="Chickling Pea" class="w-16 h-16 mx-auto mb-4">
+            <a href="https://en.wikipedia.org/wiki/Chickling_pea" 
+               target="_blank" 
+               rel="noopener noreferrer" 
+               class="block hover:text-emerald-600 transition-colors">
+                <h2 class="text-xl font-bold text-gray-800">🫘 Chickling Pea</h2>
+            </a>
+            <p class="crop-description">A legume used for animal fodder and food.</p>
+        </div>
+        <div class="crop-card">
+            <img src="black_eyed_peas.jpg" alt="Black-eyed Peas" class="w-16 h-16 mx-auto mb-4">
+            <a href="https://en.wikipedia.org/wiki/Black-eyed_peas" 
+               target="_blank" 
+               rel="noopener noreferrer" 
+               class="block hover:text-emerald-600 transition-colors">
+                <h2 class="text-xl font-bold text-gray-800">🫘 Black-eyed Peas</h2>
+            </a>
+            <p class="crop-description">A nutritious legume rich in protein and fiber.</p>
+        </div>
+        <div class="crop-card">
+            <img src="green_gram.jpg" alt="Green Gram" class="w-16 h-16 mx-auto mb-4">
+            <a href="https://en.wikipedia.org/wiki/Green_gram" 
+               target="_blank" 
+               rel="noopener noreferrer" 
+               class="block hover:text-emerald-600 transition-colors">
+                <h2 class="text-xl font-bold text-gray-800">🫘 Green Gram (Mung Bean)</h2>
+            </a>
+            <p class="crop-description">A versatile legume used in soups, salads, and sprouts.</p>
+        </div>
+        <div class="crop-card">
+            <img src="horse_gram.jpg" alt="Horse Gram" class="w-16 h-16 mx-auto mb-4">
+            <a href="https://en.wikipedia.org/wiki/Horse_gram" 
+               target="_blank" 
+               rel="noopener noreferrer" 
+               class="block hover:text-emerald-600 transition-colors">
+                <h2 class="text-xl font-bold text-gray-800">🫘 Horse Gram</h2>
+            </a>
+            <p class="crop-description">A drought-resistant legume rich in protein.</p>
+        </div>
+        <div class="crop-card">
+            <img src="pigeon_pea.jpg" alt="Pigeon Pea" class="w-16 h-16 mx-auto mb-4">
+            <a href="https://en.wikipedia.org/wiki/Pigeon_pea" 
+               target="_blank" 
+               rel="noopener noreferrer" 
+               class="block hover:text-emerald-600 transition-colors">
+                <h2 class="text-xl font-bold text-gray-800">🫘 Pigeon Pea (Toor Dal)</h2>
+            </a>
+            <p class="crop-description">A staple legume used in Indian cuisine.</p>
+        </div>
+        <div class="crop-card">
+            <img src="adzuki_bean.jpg" alt="Adzuki Bean" class="w-16 h-16 mx-auto mb-4">
+            <a href="https://en.wikipedia.org/wiki/Adzuki_bean" 
+               target="_blank" 
+               rel="noopener noreferrer" 
+               class="block hover:text-emerald-600 transition-colors">
+                <h2 class="text-xl font-bold text-gray-800">🫘 Adzuki Bean</h2>
+            </a>
+            <p class="crop-description">A small red bean commonly used in Asian desserts.</p>
+        </div>
+        <div class="crop-card">
+            <img src="rosemary.jpg" alt="Rosemary" class="w-16 h-16 mx-auto mb-4">
+            <a href="https://en.wikipedia.org/wiki/Rosemary" 
+               target="_blank" 
+               rel="noopener noreferrer" 
+               class="block hover:text-emerald-600 transition-colors">
+                <h2 class="text-xl font-bold text-gray-800">🌿 Rosemary</h2>
+            </a>
+            <p class="crop-description">A fragrant herb used in cooking and medicine.</p>
+        </div>
+        <div class="crop-card">
+            <img src="thyme.jpg" alt="Thyme" class="w-16 h-16 mx-auto mb-4">
+            <a href="https://en.wikipedia.org/wiki/Thyme" 
+               target="_blank" 
+               rel="noopener noreferrer" 
+               class="block hover:text-emerald-600 transition-colors">
+                <h2 class="text-xl font-bold text-gray-800">🌿 Thyme</h2>
+            </a>
+            <p class="crop-description">An aromatic herb with culinary and medicinal uses.</p>
+        </div>
+        <div class="crop-card">
+            <img src="oregano.jpg" alt="Oregano" class="w-16 h-16 mx-auto mb-4">
+            <a href="https://en.wikipedia.org/wiki/Oregano" 
+               target="_blank" 
+               rel="noopener noreferrer" 
+               class="block hover:text-emerald-600 transition-colors">
+                <h2 class="text-xl font-bold text-gray-800">🌿 Oregano</h2>
+            </a>
+            <p class="crop-description">A popular herb used in Mediterranean dishes.</p>
+        </div>
+        <div class="crop-card">
+            <img src="dill.jpg" alt="Dill" class="w-16 h-16 mx-auto mb-4">
+            <a href="https://en.wikipedia.org/wiki/Dill" 
+               target="_blank" 
+               rel="noopener noreferrer" 
+               class="block hover:text-emerald-600 transition-colors">
+                <h2 class="text-xl font-bold text-gray-800">🌿 Dill</h2>
+            </a>
+            <p class="crop-description">An herb with a fresh flavor, often used in pickling.</p>
+        </div>
+        <div class="crop-card">
+            <img src="cilantro.jpg" alt="Cilantro" class="w-16 h-16 mx-auto mb-4">
+            <a href="https://en.wikipedia.org/wiki/Cilantro" 
+               target="_blank" 
+               rel="noopener noreferrer" 
+               class="block hover:text-emerald-600 transition-colors">
+                <h2 class="text-xl font-bold text-gray-800">🌿 Cilantro (Coriander Leaves)</h2>
+            </a>
+            <p class="crop-description">A fresh herb widely used in cooking.</p>
+        </div>
+        <div class="crop-card">
+            <img src="bay_leaf.jpg" alt="Bay Leaf" class="w-16 h-16 mx-auto mb-4">
+            <a href="https://en.wikipedia.org/wiki/Bay_leaf" 
+               target="_blank" 
+               rel="noopener noreferrer" 
+               class="block hover:text-emerald-600 transition-colors">
+                <h2 class="text-xl font-bold text-gray-800">🍃 Bay Leaf</h2>
+            </a>
+            <p class="crop-description">A dried leaf used to add aroma to dishes.</p>
+        </div>
+        <div class="crop-card">
+            <img src="saffron.jpg" alt="Saffron" class="w-16 h-16 mx-auto mb-4">
+            <a href="https://en.wikipedia.org/wiki/Saffron" 
+               target="_blank" 
+               rel="noopener noreferrer" 
+               class="block hover:text-emerald-600 transition-colors">
+                <h2 class="text-xl font-bold text-gray-800">🌸 Saffron</h2>
+            </a>
+            <p class="crop-description">A precious spice derived from crocus flowers.</p>
+        </div>
+        <div class="crop-card">
+            <img src="lemongrass.jpg" alt="Lemongrass" class="w-16 h-16 mx-auto mb-4">
+            <a href="https://en.wikipedia.org/wiki/Lemongrass" 
+               target="_blank" 
+               rel="noopener noreferrer" 
+               class="block hover:text-emerald-600 transition-colors">
+                <h2 class="text-xl font-bold text-gray-800">🌱 Lemongrass</h2>
+            </a>
+            <p class="crop-description">An aromatic herb used in teas and cooking.</p>
+        </div>
+        <div class="crop-card">
+            <img src="clove.jpg" alt="Clove" class="w-16 h-16 mx-auto mb-4">
+            <a href="https://en.wikipedia.org/wiki/Clove" 
+               target="_blank" 
+               rel="noopener noreferrer" 
+               class="block hover:text-emerald-600 transition-colors">
+                <h2 class="text-xl font-bold text-gray-800">🌿 Clove</h2>
+            </a>
+            <p class="crop-description">A spice known for its strong aroma and medicinal benefits.</p>
+        </div>
+        <div class="crop-card">
+            <img src="nutmeg.jpg" alt="Nutmeg" class="w-16 h-16 mx-auto mb-4">
+            <a href="https://en.wikipedia.org/wiki/Nutmeg" 
+               target="_blank" 
+               rel="noopener noreferrer" 
+               class="block hover:text-emerald-600 transition-colors">
+                <h2 class="text-xl font-bold text-gray-800">🌰 Nutmeg</h2>
+            </a>
+            <p class="crop-description">A warm spice used in baking and cooking.</p>
+        </div>
+        <div class="crop-card">
+            <img src="amaranth.jpg" alt="Amaranth" class="w-16 h-16 mx-auto mb-4">
+            <h2 class="text-xl font-bold text-gray-800">🌾 Amaranth</h2>
+            <p class="crop-description">A highly nutritious grain, rich in protein and fiber.</p>
+        </div>
+        <div class="crop-card">
+            <img src="chia-seeds.jpg" alt="Chia Seeds" class="w-16 h-16 mx-auto mb-4">
+            <h2 class="text-xl font-bold text-gray-800">🌾 Chia Seeds</h2>
+            <p class="crop-description">Tiny seeds packed with omega-3 fatty acids and fiber.</p>
+        </div>
+        <div class="crop-card">
+            <img src="teff.jpg" alt="Teff" class="w-16 h-16 mx-auto mb-4">
+            <h2 class="text-xl font-bold text-gray-800">🌾 Teff</h2>
+            <p class="crop-description">A gluten-free ancient grain used in Ethiopian cuisine.</p>
+        </div>
+        <div class="crop-card">
+            <img src="spelt.jpg" alt="Spelt" class="w-16 h-16 mx-auto mb-4">
+            <h2 class="text-xl font-bold text-gray-800">🌾 Spelt</h2>
+            <p class="crop-description">An ancient wheat variety known for its nutty flavor.</p>
+        </div>
+        <div class="crop-card">
+            <img src="fonio.jpg" alt="Fonio" class="w-16 h-16 mx-auto mb-4">
+            <h2 class="text-xl font-bold text-gray-800">🌾 Fonio</h2>
+            <p class="crop-description">A small, nutritious grain grown in West Africa.</p>
+        </div>
+        <div class="crop-card">
+            <img src="triticale.jpg" alt="Triticale" class="w-16 h-16 mx-auto mb-4">
+            <h2 class="text-xl font-bold text-gray-800">🌾 Triticale</h2>
+            <p class="crop-description">A hybrid grain combining wheat and rye properties.</p>
+        </div>
+        <div class="crop-card">
+            <img src="jobs-tears.jpg" alt="Job's Tears" class="w-16 h-16 mx-auto mb-4">
+            <h2 class="text-xl font-bold text-gray-800">🌾 Job's Tears</h2>
+            <p class="crop-description">A gluten-free grain with medicinal and culinary uses.</p>
+        </div>
+        <div class="crop-card">
+            <img src="sesame-seeds.jpg" alt="Sesame Seeds" class="w-16 h-16 mx-auto mb-4">
+            <h2 class="text-xl font-bold text-gray-800">🌰 Sesame Seeds</h2>
+            <p class="crop-description">Tiny seeds rich in oil and commonly used in cooking.</p>
+        </div>
+        <div class="crop-card">
+            <img src="flax-seeds.jpg" alt="Flax Seeds" class="w-16 h-16 mx-auto mb-4">
+            <h2 class="text-xl font-bold text-gray-800">🌾 Flax Seeds</h2>
+            <p class="crop-description">A superfood loaded with fiber and omega-3 fatty acids.</p>
+        </div>
+        <div class="crop-card">
+            <img src="pumpkin-seeds.jpg" alt="Pumpkin Seeds" class="w-16 h-16 mx-auto mb-4">
+            <h2 class="text-xl font-bold text-gray-800">🎃 Pumpkin Seeds</h2>
+            <p class="crop-description">A nutritious snack rich in magnesium and protein.</p>
+        </div>
+        <div class="crop-card">
+            <img src="sunflower-seeds.jpg" alt="Sunflower Seeds" class="w-16 h-16 mx-auto mb-4">
+            <h2 class="text-xl font-bold text-gray-800">🌻 Sunflower Seeds</h2>
+            <p class="crop-description">Crunchy seeds full of vitamin E and healthy fats.</p>
+        </div>
+        <div class="crop-card">
+            <img src="mustard-seeds.jpg" alt="Mustard Seeds" class="w-16 h-16 mx-auto mb-4">
+            <h2 class="text-xl font-bold text-gray-800">🌿 Mustard Seeds</h2>
+            <p class="crop-description">Spicy seeds used in cooking and pickling.</p>
+        </div>
+        <div class="crop-card">
+            <img src="fenugreek.jpg" alt="Fenugreek" class="w-16 h-16 mx-auto mb-4">
+            <h2 class="text-xl font-bold text-gray-800">🌿 Fenugreek</h2>
+            <p class="crop-description">An herb with medicinal properties and a maple-like flavor.</p>
+        </div>
+        <div class="crop-card">
+            <img src="cumin.jpg" alt="Cumin" class="w-16 h-16 mx-auto mb-4">
+            <h2 class="text-xl font-bold text-gray-800">🌿 Cumin</h2>
+            <p class="crop-description">A warm spice essential in many cuisines.</p>
+        </div>
+        <div class="crop-card">
+            <img src="caraway.jpg" alt="Caraway" class="w-16 h-16 mx-auto mb-4">
+            <h2 class="text-xl font-bold text-gray-800">🌿 Caraway</h2>
+            <p class="crop-description">A spice with a distinctive licorice-like taste.</p>
+        </div>
+        <div class="crop-card">
+            <img src="anise.jpg" alt="Anise" class="w-16 h-16 mx-auto mb-4">
+            <h2 class="text-xl font-bold text-gray-800">🌿 Anise</h2>
+            <p class="crop-description">An aromatic spice with a sweet, licorice flavor.</p>
+        </div>
+        <div class="crop-card">
+            <img src="cardamom.jpg" alt="Cardamom" class="w-16 h-16 mx-auto mb-4">
+            <h2 class="text-xl font-bold text-gray-800">🌿 Cardamom</h2>
+            <p class="crop-description">A fragrant spice used in both sweet and savory dishes.</p>
+        </div>
+        
+        <div class="crop-card">
+            <img src="turmeric.jpg" alt="Turmeric" class="w-16 h-16 mx-auto mb-4">
+            <h2 class="text-xl font-bold text-gray-800">🌿 Turmeric</h2>
+            <p class="crop-description">A golden spice known for its anti-inflammatory properties.</p>
+        </div>
+        
+        <div class="crop-card">
+            <img src="ginger.jpg" alt="Ginger" class="w-16 h-16 mx-auto mb-4">
+            <h2 class="text-xl font-bold text-gray-800">🌱 Ginger</h2>
+            <p class="crop-description">A root spice used in cooking and herbal medicine.</p>
+        </div>
+        
+        <div class="crop-card">
+            <img src="wasabi.jpg" alt="Wasabi" class="w-16 h-16 mx-auto mb-4">
+            <h2 class="text-xl font-bold text-gray-800">🌿 Wasabi</h2>
+            <p class="crop-description">A spicy green paste commonly used in Japanese cuisine.</p>
+        </div>
+        
+        <div class="crop-card">
+            <img src="chervil.jpg" alt="Chervil" class="w-16 h-16 mx-auto mb-4">
+            <h2 class="text-xl font-bold text-gray-800">🌿 Chervil</h2>
+            <p class="crop-description">A delicate herb with a mild anise flavor.</p>
+        </div>
+        
+        <div class="crop-card">
+            <img src="savory.jpg" alt="Savory" class="w-16 h-16 mx-auto mb-4">
+            <h2 class="text-xl font-bold text-gray-800">🌿 Savory</h2>
+            <p class="crop-description">A herb with a peppery flavor, used in culinary dishes.</p>
+        </div>
+        
+        <div class="crop-card">
+            <img src="tarragon.jpg" alt="Tarragon" class="w-16 h-16 mx-auto mb-4">
+            <h2 class="text-xl font-bold text-gray-800">🌿 Tarragon</h2>
+            <p class="crop-description">A fragrant herb with a slight licorice taste.</p>
+        </div>
+        
+        <div class="crop-card">
+            <img src="basil.jpg" alt="Basil" class="w-16 h-16 mx-auto mb-4">
+            <h2 class="text-xl font-bold text-gray-800">🌿 Basil</h2>
+            <p class="crop-description">A fresh herb widely used in Italian and Thai cuisine.</p>
+        </div>
+        
+        <div class="crop-card">
+            <img src="marjoram.jpg" alt="Marjoram" class="w-16 h-16 mx-auto mb-4">
+            <h2 class="text-xl font-bold text-gray-800">🌿 Marjoram</h2>
+            <p class="crop-description">A herb with a sweet, mild oregano-like flavor.</p>
+        </div>
+        
+        <div class="crop-card">
+            <img src="watermelon.jpg" alt="Watermelon" class="w-16 h-16 mx-auto mb-4">
+            <h2 class="text-xl font-bold text-gray-800">🍉 Watermelon</h2>
+            <p class="crop-description">A refreshing summer fruit with high water content.</p>
+        </div>
+        
+        <div class="crop-card">
+            <img src="custard-apple.jpg" alt="Custard Apple" class="w-16 h-16 mx-auto mb-4">
+            <h2 class="text-xl font-bold text-gray-800">🍏 Custard Apple</h2>
+            <p class="crop-description">A sweet tropical fruit with a creamy texture.</p>
+        </div>
+        
+        <div class="crop-card">
+            <img src="soursop.jpg" alt="Soursop" class="w-16 h-16 mx-auto mb-4">
+            <h2 class="text-xl font-bold text-gray-800">🍏 Soursop</h2>
+            <p class="crop-description">A tropical fruit known for its tangy and sweet flavor.</p>
+        </div>
+        
+        <div class="crop-card">
+            <img src="longan.jpg" alt="Longan" class="w-16 h-16 mx-auto mb-4">
+            <h2 class="text-xl font-bold text-gray-800">🍒 Longan</h2>
+            <p class="crop-description">A small, sweet tropical fruit similar to lychee.</p>
+        </div>
+        
+        <div class="crop-card">
+            <img src="langsat.jpg" alt="Langsat" class="w-16 h-16 mx-auto mb-4">
+            <h2 class="text-xl font-bold text-gray-800">🍏 Langsat</h2>
+            <p class="crop-description">A tropical fruit with a slightly tart and sweet taste.</p>
+        </div>
+        
+        <div class="crop-card">
+            <img src="snake-fruit.jpg" alt="Snake Fruit (Salak)" class="w-16 h-16 mx-auto mb-4">
+            <h2 class="text-xl font-bold text-gray-800">🍏 Snake Fruit (Salak)</h2>
+            <p class="crop-description">A scaly-skinned fruit with a crunchy, sweet taste.</p>
+        </div>
+        
+        <div class="crop-card">
+            <img src="breadfruit.jpg" alt="Breadfruit" class="w-16 h-16 mx-auto mb-4">
+            <h2 class="text-xl font-bold text-gray-800">🍞 Breadfruit</h2>
+            <p class="crop-description">A starchy fruit used as a staple food in tropical regions.</p>
+        </div>
+        <div class="crop-card">
+            <img src="bael-fruit.jpg" alt="Bael Fruit" class="w-16 h-16 mx-auto mb-4">
+            <h2 class="text-xl font-bold text-gray-800">🍏 Bael Fruit</h2>
+            <p class="crop-description">A medicinal fruit known for its digestive benefits.</p>
+        </div>
+        
+        <div class="crop-card">
+            <img src="santol.jpg" alt="Santol" class="w-16 h-16 mx-auto mb-4">
+            <h2 class="text-xl font-bold text-gray-800">🍏 Santol</h2>
+            <p class="crop-description">A tropical fruit with a tangy-sweet flavor.</p>
+        </div>
+        
+        <div class="crop-card">
+            <img src="ambarella.jpg" alt="Ambarella" class="w-16 h-16 mx-auto mb-4">
+            <h2 class="text-xl font-bold text-gray-800">🍏 Ambarella</h2>
+            <p class="crop-description">A crunchy and juicy fruit with a tart flavor.</p>
+        </div>
+        
+        <div class="crop-card">
+            <img src="horned-melon.jpg" alt="Horned Melon (Kiwano)" class="w-16 h-16 mx-auto mb-4">
+            <h2 class="text-xl font-bold text-gray-800">🍈 Horned Melon (Kiwano)</h2>
+            <p class="crop-description">A vibrant orange fruit with a jelly-like green interior.</p>
+        </div>
+        
+        <div class="crop-card">
+            <img src="huckleberry.jpg" alt="Huckleberry" class="w-16 h-16 mx-auto mb-4">
+            <h2 class="text-xl font-bold text-gray-800">🍇 Huckleberry</h2>
+            <p class="crop-description">A small, dark berry with a sweet-tart flavor.</p>
+        </div>
+        
+        <div class="crop-card">
+            <img src="cloudberry.jpg" alt="Cloudberry" class="w-16 h-16 mx-auto mb-4">
+            <h2 class="text-xl font-bold text-gray-800">🍇 Cloudberry</h2>
+            <p class="crop-description">A golden-colored berry with a rich, tart taste.</p>
+        </div>
+        
+        <div class="crop-card">
+            <img src="maracuja.jpg" alt="Maracuja (Sweet Passion Fruit)" class="w-16 h-16 mx-auto mb-4">
+            <h2 class="text-xl font-bold text-gray-800">🍋 Maracuja (Sweet Passion Fruit)</h2>
+            <p class="crop-description">A tropical fruit with a sweet and aromatic flavor.</p>
+        </div>
+        
+        <div class="crop-card">
+            <img src="ackee.jpg" alt="Ackee" class="w-16 h-16 mx-auto mb-4">
+            <h2 class="text-xl font-bold text-gray-800">🍏 Ackee</h2>
+            <p class="crop-description">A unique fruit used in Caribbean cuisine, especially in Jamaica.</p>
+        </div>
+        
+        <div class="crop-card">
+            <img src="mangosteen.jpg" alt="Mangosteen" class="w-16 h-16 mx-auto mb-4">
+            <h2 class="text-xl font-bold text-gray-800">🍏 Mangosteen</h2>
+            <p class="crop-description">A tropical fruit known as the "queen of fruits" for its sweet, juicy flesh.</p>
+        </div>
+        
+        <div class="crop-card">
+            <img src="goji-berry.jpg" alt="Goji Berry" class="w-16 h-16 mx-auto mb-4">
+            <h2 class="text-xl font-bold text-gray-800">🍒 Goji Berry</h2>
+            <p class="crop-description">A superfood berry rich in antioxidants and nutrients.</p>
+        </div>
+        
+        <div class="crop-card">
+            <img src="sea-buckthorn-berry.jpg" alt="Sea Buckthorn Berry" class="w-16 h-16 mx-auto mb-4">
+            <h2 class="text-xl font-bold text-gray-800">🍇 Sea Buckthorn Berry</h2>
+            <p class="crop-description">A bright orange berry known for its high vitamin C content.</p>
+        </div>
+        
+        <div class="crop-card">
+            <img src="tamarillo.jpg" alt="Tamarillo (Tree Tomato)" class="w-16 h-16 mx-auto mb-4">
+            <h2 class="text-xl font-bold text-gray-800">🍅 Tamarillo (Tree Tomato)</h2>
+            <p class="crop-description">A tangy fruit often used in salads and sauces.</p>
+        </div>
+        
+        <div class="crop-card">
+            <img src="yacon.jpg" alt="Yacon" class="w-16 h-16 mx-auto mb-4">
+            <h2 class="text-xl font-bold text-gray-800">🍠 Yacon</h2>
+            <p class="crop-description">A root vegetable with a sweet, juicy taste.</p>
+        </div>
+        
+        <div class="crop-card">
+            <img src="water-chestnut.jpg" alt="Water Chestnut" class="w-16 h-16 mx-auto mb-4">
+            <h2 class="text-xl font-bold text-gray-800">🌰 Water Chestnut</h2>
+            <p class="crop-description">A crunchy aquatic vegetable often used in Asian cuisine.</p>
+        </div>
+        
+        <div class="crop-card">
+            <img src="jicama.jpg" alt="Jicama" class="w-16 h-16 mx-auto mb-4">
+            <h2 class="text-xl font-bold text-gray-800">🌱 Jicama</h2>
+            <p class="crop-description">A crisp, sweet root vegetable eaten raw or cooked.</p>
+        </div>
+        
+        <div class="crop-card">
+            <img src="bamboo-shoots.jpg" alt="Bamboo Shoots" class="w-16 h-16 mx-auto mb-4">
+            <h2 class="text-xl font-bold text-gray-800">🎍 Bamboo Shoots</h2>
+            <p class="crop-description">A versatile vegetable used in stir-fries and soups.</p>
+        </div>
+        
+        <div class="crop-card">
+            <img src="winged-bean.jpg" alt="Winged Bean" class="w-16 h-16 mx-auto mb-4">
+            <h2 class="text-xl font-bold text-gray-800">🫘 Winged Bean</h2>
+            <p class="crop-description">A nutritious legume with edible leaves, flowers, and pods.</p>
+        </div>  
+        <div class="crop-card">
+            <img src="black-sapote.jpg" alt="Black Sapote" class="w-16 h-16 mx-auto mb-4">
+            <h2 class="text-xl font-bold text-gray-800">🍏 Black Sapote</h2>
+            <p class="crop-description">Also known as the "chocolate pudding fruit," it has a rich, sweet flavor.</p>
+        </div>
+        
+        <div class="crop-card">
+            <img src="white-sapote.jpg" alt="White Sapote" class="w-16 h-16 mx-auto mb-4">
+            <h2 class="text-xl font-bold text-gray-800">🍏 White Sapote</h2>
+            <p class="crop-description">A creamy, custard-like fruit with a mild sweetness.</p>
+        </div>
+        
+        <div class="crop-card">
+            <img src="kei-apple.jpg" alt="Kei Apple" class="w-16 h-16 mx-auto mb-4">
+            <h2 class="text-xl font-bold text-gray-800">🍏 Kei Apple</h2>
+            <p class="crop-description">A tart, vitamin C-rich fruit often used in jams and preserves.</p>
+        </div>
+        
+        <div class="crop-card">
+            <img src="surinam-cherry.jpg" alt="Surinam Cherry" class="w-16 h-16 mx-auto mb-4">
+            <h2 class="text-xl font-bold text-gray-800">🍒 Surinam Cherry</h2>
+            <p class="crop-description">A bright red fruit with a tart, tangy taste.</p>
+        </div>
+        
+        <div class="crop-card">
+            <img src="miracle-fruit.jpg" alt="Miracle Fruit" class="w-16 h-16 mx-auto mb-4">
+            <h2 class="text-xl font-bold text-gray-800">🍒 Miracle Fruit</h2>
+            <p class="crop-description">A unique berry that makes sour foods taste sweet.</p>
+        </div>
+        
+        <div class="crop-card">
+            <img src="chempedak.jpg" alt="Chempedak" class="w-16 h-16 mx-auto mb-4">
+            <h2 class="text-xl font-bold text-gray-800">🍈 Chempedak</h2>
+            <p class="crop-description">A close relative of jackfruit with a strong aroma and sweet taste.</p>
+        </div>
+        
+        <div class="crop-card">
+            <img src="pulasan.jpg" alt="Pulasan" class="w-16 h-16 mx-auto mb-4">
+            <h2 class="text-xl font-bold text-gray-800">🍒 Pulasan</h2>
+            <p class="crop-description">A tropical fruit similar to rambutan but sweeter and juicier.</p>
+        </div>
+        
+        <div class="crop-card">
+            <img src="mountain-papaya.jpg" alt="Mountain Papaya" class="w-16 h-16 mx-auto mb-4">
+            <h2 class="text-xl font-bold text-gray-800">🍈 Mountain Papaya</h2>
+            <p class="crop-description">A small, fragrant papaya species found in high-altitude regions.</p>
+        </div>
+        
+        <div class="crop-card">
+            <img src="rollinia.jpg" alt="Rollinia (Biriba)" class="w-16 h-16 mx-auto mb-4">
+            <h2 class="text-xl font-bold text-gray-800">🍏 Rollinia (Biriba)</h2>
+            <p class="crop-description">A tropical fruit with a creamy, custard-like texture.</p>
+        </div>
+        
+        <div class="crop-card">
+            <img src="mamoncillo.jpg" alt="Mamoncillo (Spanish Lime)" class="w-16 h-16 mx-auto mb-4">
+            <h2 class="text-xl font-bold text-gray-800">🍋 Mamoncillo (Spanish Lime)</h2>
+            <p class="crop-description">A tart and juicy fruit with a refreshing citrus taste.</p>
+        </div>
+        
+        <div class="crop-card">
+            <img src="monkey-orange.jpg" alt="Monkey Orange" class="w-16 h-16 mx-auto mb-4">
+            <h2 class="text-xl font-bold text-gray-800">🍊 Monkey Orange</h2>
+            <p class="crop-description">A tropical fruit with a sweet and tangy flavor.</p>
+        </div>
+        
+        <div class="crop-card">
+            <img src="genip.jpg" alt="Genip" class="w-16 h-16 mx-auto mb-4">
+            <h2 class="text-xl font-bold text-gray-800">🍈 Genip</h2>
+            <p class="crop-description">A small, green fruit with a tangy, juicy pulp.</p>
+        </div>
+        
+        <div class="crop-card">
+            <img src="jaboticaba.jpg" alt="Jaboticaba" class="w-16 h-16 mx-auto mb-4">
+            <h2 class="text-xl font-bold text-gray-800">🍇 Jaboticaba</h2>
+            <p class="crop-description">A grape-like fruit that grows directly on tree trunks.</p>
+        </div>
+        
+        <div class="crop-card">
+            <img src="pitanga.jpg" alt="Pitanga (Brazil Cherry)" class="w-16 h-16 mx-auto mb-4">
+            <h2 class="text-xl font-bold text-gray-800">🍒 Pitanga (Brazil Cherry)</h2>
+            <p class="crop-description">A vibrant red fruit with a sweet and tangy taste.</p>
+        </div>
+        
+        <div class="crop-card">
+            <img src="nance-fruit.jpg" alt="Nance Fruit" class="w-16 h-16 mx-auto mb-4">
+            <h2 class="text-xl font-bold text-gray-800">🍋 Nance Fruit</h2>
+            <p class="crop-description">A small, yellow fruit with a strong aroma and sweet flavor.</p>
+        </div>
+        
+        <div class="crop-card">
+            <img src="mamey-sapote.jpg" alt="Mamey Sapote" class="w-16 h-16 mx-auto mb-4">
+            <h2 class="text-xl font-bold text-gray-800">🍈 Mamey Sapote</h2>
+            <p class="crop-description">A creamy-textured fruit with a unique, sweet taste.</p>
+        </div>
+        
+        <div class="crop-card">
+            <img src="hog-plum.jpg" alt="Hog Plum" class="w-16 h-16 mx-auto mb-4">
+            <h2 class="text-xl font-bold text-gray-800">🍏 Hog Plum</h2>
+            <p class="crop-description">A tart fruit commonly used in chutneys and preserves.</p>
+        </div>
+        
+        <div class="crop-card">
+            <img src="pawpaw.jpg" alt="Pawpaw (Asimina triloba)" class="w-16 h-16 mx-auto mb-4">
+            <h2 class="text-xl font-bold text-gray-800">🍈 Pawpaw (Asimina triloba)</h2>
+            <p class="crop-description">A North American fruit with a custard-like texture and tropical flavor.</p>
+        </div>         
+        <div class="crop-card">
+            <img src="medlar.jpg" alt="Medlar" class="w-16 h-16 mx-auto mb-4">
+            <h2 class="text-xl font-bold text-gray-800">🍏 Medlar</h2>
+            <p class="crop-description">An ancient fruit that becomes soft and sweet when fully ripened.</p>
+        </div>
+        
+        <div class="crop-card">
+            <img src="feijoa.jpg" alt="Feijoa (Pineapple Guava)" class="w-16 h-16 mx-auto mb-4">
+            <h2 class="text-xl font-bold text-gray-800">🍏 Feijoa (Pineapple Guava)</h2>
+            <p class="crop-description">A tropical fruit with a sweet and tangy pineapple-like flavor.</p>
+        </div>
+        
+        <div class="crop-card">
+            <img src="chayote.jpg" alt="Chayote" class="w-16 h-16 mx-auto mb-4">
+            <h2 class="text-xl font-bold text-gray-800">🍏 Chayote</h2>
+            <p class="crop-description">A green, pear-shaped vegetable with a mild, crisp taste.</p>
+        </div>
+        
+        <div class="crop-card">
+            <img src="ice-cream-bean.jpg" alt="Ice Cream Bean" class="w-16 h-16 mx-auto mb-4">
+            <h2 class="text-xl font-bold text-gray-800">🍏 Ice Cream Bean</h2>
+            <p class="crop-description">A legume with a sweet, vanilla-flavored pulp inside.</p>
+        </div>
+        
+        <div class="crop-card">
+            <img src="cupuassu.jpg" alt="Cupuassu" class="w-16 h-16 mx-auto mb-4">
+            <h2 class="text-xl font-bold text-gray-800">🍫 Cupuassu</h2>
+            <p class="crop-description">A tropical fruit related to cacao, known for its creamy pulp.</p>
+        </div>
+        
+        <div class="crop-card">
+            <img src="ceylon-gooseberry.jpg" alt="Ceylon Gooseberry" class="w-16 h-16 mx-auto mb-4">
+            <h2 class="text-xl font-bold text-gray-800">🍒 Ceylon Gooseberry</h2>
+            <p class="crop-description">A tart berry commonly used in jams and juices.</p>
+        </div>
+        
+        <div class="crop-card">
+            <img src="buffaloberry.jpg" alt="Buffaloberry" class="w-16 h-16 mx-auto mb-4">
+            <h2 class="text-xl font-bold text-gray-800">🍇 Buffaloberry</h2>
+            <p class="crop-description">A small, red berry rich in antioxidants.</p>
+        </div>
+        
+        <div class="crop-card">
+            <img src="silverberry.jpg" alt="Silverberry" class="w-16 h-16 mx-auto mb-4">
+            <h2 class="text-xl font-bold text-gray-800">🍒 Silverberry</h2>
+            <p class="crop-description">A silvery-skinned fruit with a sweet, edible pulp.</p>
+        </div>
+        
+        <div class="crop-card">
+            <img src="cornelian-cherry.jpg" alt="Cornelian Cherry" class="w-16 h-16 mx-auto mb-4">
+            <h2 class="text-xl font-bold text-gray-800">🍒 Cornelian Cherry</h2>
+            <p class="crop-description">A tart cherry-like fruit often used in preserves and drinks.</p>
+        </div>
+        
+        <div class="crop-card">
+            <img src="bignay.jpg" alt="Bignay" class="w-16 h-16 mx-auto mb-4">
+            <h2 class="text-xl font-bold text-gray-800">🍇 Bignay</h2>
+            <p class="crop-description">A small, red fruit with a sour and astringent taste.</p>
+        </div>
+        
+        <div class="crop-card">
+            <img src="salmonberry.jpg" alt="Salmonberry" class="w-16 h-16 mx-auto mb-4">
+            <h2 class="text-xl font-bold text-gray-800">🍇 Salmonberry</h2>
+            <p class="crop-description">A raspberry-like fruit native to North America.</p>
+        </div>
+        
+        <div class="crop-card">
+            <img src="maypop.jpg" alt="Maypop (Wild Passionfruit)" class="w-16 h-16 mx-auto mb-4">
+            <h2 class="text-xl font-bold text-gray-800">🍋 Maypop (Wild Passionfruit)</h2>
+            <p class="crop-description">A native passionfruit species with a tropical, tart taste.</p>
+        </div>
+        
+        <div class="crop-card">
+            <img src="romanesco.jpg" alt="Romanesco Broccoli" class="w-16 h-16 mx-auto mb-4">
+            <h2 class="text-xl font-bold text-gray-800">🥦 Romanesco Broccoli</h2>
+            <p class="crop-description">A unique vegetable with a fractal pattern and a nutty taste.</p>
+        </div>
+        
+        <div class="crop-card">
+            <img src="taro.jpg" alt="Taro" class="w-16 h-16 mx-auto mb-4">
+            <h2 class="text-xl font-bold text-gray-800">🍠 Taro</h2>
+            <p class="crop-description">A root vegetable used in both savory and sweet dishes.</p>
+        </div>
+        
+        <div class="crop-card">
+            <img src="malabar-spinach.jpg" alt="Malabar Spinach" class="w-16 h-16 mx-auto mb-4">
+            <h2 class="text-xl font-bold text-gray-800">🥬 Malabar Spinach</h2>
+            <p class="crop-description">A leafy green with a slightly tangy flavor, popular in Asian cuisine.</p>
+        </div>
+        
+        <div class="crop-card">
+            <img src="cassava.jpg" alt="Cassava (Yuca)" class="w-16 h-16 mx-auto mb-4">
+            <h2 class="text-xl font-bold text-gray-800">🍠 Cassava (Yuca)</h2>
+            <p class="crop-description">A starchy tuber used to make tapioca and flour.</p>
+        </div>
+        
+        <div class="crop-card">
+            <img src="daikon-radish.jpg" alt="Daikon Radish" class="w-16 h-16 mx-auto mb-4">
+            <h2 class="text-xl font-bold text-gray-800">🌱 Daikon Radish</h2>
+            <p class="crop-description">A mild-flavored radish popular in Asian cooking.</p>
+        </div>
+        
+        <div class="crop-card">
+            <img src="kohlrabi.jpg" alt="Kohlrabi" class="w-16 h-16 mx-auto mb-4">
+            <h2 class="text-xl font-bold text-gray-800">🌱 Kohlrabi</h2>
+            <p class="crop-description">A cabbage-family vegetable with a crisp texture.</p>
+        </div>
+        
+        <div class="crop-card">
+            <img src="jerusalem-artichoke.jpg" alt="Jerusalem Artichoke" class="w-16 h-16 mx-auto mb-4">
+            <h2 class="text-xl font-bold text-gray-800">🌿 Jerusalem Artichoke</h2>
+            <p class="crop-description">A tuber with a nutty, sweet taste, also called "sunchoke."</p>
+        </div>
+        
+        <div class="crop-card">
+            <img src="chicory.jpg" alt="Chicory" class="w-16 h-16 mx-auto mb-4">
+            <h2 class="text-xl font-bold text-gray-800">🌿 Chicory</h2>
+            <p class="crop-description">A bitter leafy green used in salads and coffee substitutes.</p>
+        </div>
+        
+        <div class="crop-card">
+            <img src="endive.jpg" alt="Endive" class="w-16 h-16 mx-auto mb-4">
+            <h2 class="text-xl font-bold text-gray-800">🌿 Endive</h2>
+            <p class="crop-description">A crisp, slightly bitter leafy vegetable often used in salads.</p>
+        </div>        
+        <div class="crop-card">
+            <img src="peanut.jpg" alt="Peanut" class="w-16 h-16 mx-auto mb-4">
+            <h2 class="text-xl font-bold text-gray-800">🥜 Peanut</h2>
+            <p class="crop-description">A legume rich in protein and commonly used in snacks and oils.</p>
+        </div>
+        
+        <div class="crop-card">
+            <img src="lavender.jpg" alt="Lavender" class="w-16 h-16 mx-auto mb-4">
+            <h2 class="text-xl font-bold text-gray-800">🌸 Lavender</h2>
+            <p class="crop-description">An aromatic herb known for its calming scent and medicinal uses.</p>
+        </div>
+        
+        <div class="crop-card">
+            <img src="stevia.jpg" alt="Stevia" class="w-16 h-16 mx-auto mb-4">
+            <h2 class="text-xl font-bold text-gray-800">🍃 Stevia</h2>
+            <p class="crop-description">A natural sweetener derived from the leaves of the Stevia plant.</p>
+        </div>
+        
+        <div class="crop-card">
+            <img src="calendula.jpg" alt="Calendula" class="w-16 h-16 mx-auto mb-4">
+            <h2 class="text-xl font-bold text-gray-800">🌸 Calendula</h2>
+            <p class="crop-description">A medicinal flower used for its anti-inflammatory properties.</p>
+        </div>
+        
+        <div class="crop-card">
+            <img src="candle-nut.jpg" alt="Candle Nut" class="w-16 h-16 mx-auto mb-4">
+            <h2 class="text-xl font-bold text-gray-800">🌰 Candle Nut</h2>
+            <p class="crop-description">A nut used in cooking and for oil extraction.</p>
+        </div>
+        
+        <div class="crop-card">
+            <img src="gac-fruit.jpg" alt="Gac Fruit" class="w-16 h-16 mx-auto mb-4">
+            <h2 class="text-xl font-bold text-gray-800">🍈 Gac Fruit</h2>
+            <p class="crop-description">A bright orange fruit rich in antioxidants and vitamins.</p>
+        </div>
+        
+        <div class="crop-card">
+            <img src="date-palm-seeds.jpg" alt="Date Palm Seeds" class="w-16 h-16 mx-auto mb-4">
+            <h2 class="text-xl font-bold text-gray-800">🌰 Date Palm Seeds</h2>
+            <p class="crop-description">Seeds from the date palm tree, sometimes used for oil or powder.</p>
+        </div>
+        
+        <div class="crop-card">
+            <img src="ambarella.jpg" alt="Ambarella" class="w-16 h-16 mx-auto mb-4">
+            <h2 class="text-xl font-bold text-gray-800">🍏 Ambarella</h2>
+            <p class="crop-description">A tropical fruit with a crisp texture and tangy flavor.</p>
+        </div>
+        
+        <div class="crop-card">
+            <img src="acai-berry.jpg" alt="Acai Berry" class="w-16 h-16 mx-auto mb-4">
+            <h2 class="text-xl font-bold text-gray-800">🍇 Acai Berry</h2>
+            <p class="crop-description">A small, dark berry known for its high antioxidant content.</p>
+        </div>
+        
+        <div class="crop-card">
+            <img src="bacaba.jpg" alt="Bacaba" class="w-16 h-16 mx-auto mb-4">
+            <h2 class="text-xl font-bold text-gray-800">🍇 Bacaba</h2>
+            <p class="crop-description">A tropical berry commonly used to make juice.</p>
+        </div>
+        
+        <div class="crop-card">
+            <img src="barbados-cherry.jpg" alt="Barbados Cherry" class="w-16 h-16 mx-auto mb-4">
+            <h2 class="text-xl font-bold text-gray-800">🍒 Barbados Cherry</h2>
+            <p class="crop-description">A vitamin C-rich cherry with a tart-sweet taste.</p>
+        </div>
+        
+        <div class="crop-card">
+            <img src="bilimbi.jpg" alt="Bilimbi" class="w-16 h-16 mx-auto mb-4">
+            <h2 class="text-xl font-bold text-gray-800">🍋 Bilimbi</h2>
+            <p class="crop-description">A sour fruit used in pickles, juices, and curries.</p>
+        </div>
+        
+        <div class="crop-card">
+            <img src="huito.jpg" alt="Huito (Genipap)" class="w-16 h-16 mx-auto mb-4">
+            <h2 class="text-xl font-bold text-gray-800">🍇 Huito (Genipap)</h2>
+            <p class="crop-description">A dark-skinned fruit used in dyes and traditional medicine.</p>
+        </div>
+        
+        <div class="crop-card">
+            <img src="indian-fig.jpg" alt="Indian Fig (Prickly Pear Cactus)" class="w-16 h-16 mx-auto mb-4">
+            <h2 class="text-xl font-bold text-gray-800">🌵🍐 Indian Fig (Prickly Pear Cactus)</h2>
+            <p class="crop-description">A cactus fruit with a sweet and juicy pulp.</p>
+        </div>
+        
+        <div class="crop-card">
+            <img src="indian-jujube.jpg" alt="Indian Jujube" class="w-16 h-16 mx-auto mb-4">
+            <h2 class="text-xl font-bold text-gray-800">🍎 Indian Jujube</h2>
+            <p class="crop-description">A small, sweet, and tangy fruit known for its health benefits.</p>
+        </div>
+        
+        <div class="crop-card">
+            <img src="indian-plum.jpg" alt="Indian Plum" class="w-16 h-16 mx-auto mb-4">
+            <h2 class="text-xl font-bold text-gray-800">🍏 Indian Plum</h2>
+            <p class="crop-description">A tropical fruit with a tart taste, often used in chutneys.</p>
+        </div>                                                  
+    
+        <div class="crop-card">
+            <img src="pomegranate.jpg" alt="Pomegranate" class="w-16 h-16 mx-auto mb-4">
+            <h2 class="text-xl font-bold text-gray-800">🍎 Pomegranate</h2>
+            <p class="crop-description">A fruit filled with juicy, antioxidant-rich seeds.</p>
+        </div>
+        
+    </div>
+    
+    </div>
+    <script>
+        document.getElementById('crop-search').addEventListener('input', function () {
+            let filter = this.value.toLowerCase();
+            let cropCards = document.querySelectorAll('.crop-card');
+            
+            cropCards.forEach(card => {
+                let cropName = card.querySelector('h2').textContent.toLowerCase();
+                if (cropName.includes(filter)) {
+                    card.style.display = "block";
+                } else {
+                    card.style.display = "none";
+                }
+            });
+        });
+    </script>
+    <!-- Add this script before the closing body tag -->
+    <script>
+        // Check login status
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            const loginBtn = document.querySelector('.login-btn');
+            const userDashboard = document.getElementById('userDashboard');
+            const username = document.getElementById('username');
+
+            if (currentUser) {
+                loginBtn.classList.add('hidden');
+                userDashboard.classList.remove('hidden');
+                username.textContent = currentUser.username;
+            }
+        });
+
+        // Toggle dropdown
+        const userMenuBtn = document.getElementById('userMenuBtn');
+        const userDropdown = document.getElementById('userDropdown');
+        
+        userMenuBtn?.addEventListener('click', () => {
+            userDropdown.classList.toggle('hidden');
+        });
+
+        // Logout
+        function logout() {
+            localStorage.removeItem('currentUser');
+            window.location.href = 'login.html';
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,945 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agricultural Pest Detection System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, rgba(220, 252, 231, 0.97), rgba(240, 253, 244, 0.97));
+            color: #1f2937;
+            background-image: url('https://images.pexels.com/photos/440731/pexels-photo-440731.jpeg');
+            background-size: cover;
+            background-attachment: fixed;
+            background-blend-mode: overlay;
+            min-height: 100vh;
+            position: relative;
+        }
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.85);  /* Lighter overlay for better text visibility */
+            z-index: -1;
+        }
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            transition: all 0.3s ease;
+        }
+        .glass-effect:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px 0 rgba(31, 38, 135, 0.45);
+        }
+        .detection-box {
+            transition: all 0.3s ease;
+            border: 2px solid rgba(139, 69, 19, 0.3);
+        }
+        .detection-box:hover {
+            transform: scale(1.02);
+            box-shadow: 0 0 20px rgba(76, 175, 80, 0.5);
+        }
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        .btn-primary {
+            background: linear-gradient(45deg, #2d5a3f, #1a472a);
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(45, 90, 63, 0.4);
+        }
+        .btn-danger {
+            background: linear-gradient(45deg, #8b4513, #654321);
+            transition: all 0.3s ease;
+        }
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(139, 69, 19, 0.4);
+        }
+        .error-message {
+            animation: slideIn 0.3s ease;
+        }
+        @keyframes slideIn {
+            from { transform: translateY(-100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .section-title {
+            color: #f4a460;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        /* Mobile Menu Styles */
+        #mobileMenu {
+            background: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+        #mobileMenu a {
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        #mobileMenu a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: #4CAF50;
+            transition: width 0.3s ease;
+        }
+        #mobileMenu a:hover::after {
+            width: 100%;
+        }
+        .menu-button {
+            transition: all 0.3s ease;
+        }
+        .menu-button:hover {
+            transform: scale(1.1);
+        }
+        /* Success message styling */
+        .success-message {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(to right, #059669, #10b981);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            text-align: center;
+            font-size: 1rem;
+            font-weight: 500;
+            min-width: 300px;
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .success-message.show {
+            opacity: 1;
+            visibility: visible;
+            animation: slideDown 0.3s ease forwards;
+        }
+        @keyframes slideDown {
+            0% {
+                transform: translateX(-50%) translateY(-20px);
+                opacity: 0;
+            }
+            100% {
+                transform: translateX(-50%) translateY(0);
+                opacity: 1;
+            }
+        }
+        /* Content sections */
+        .content-section {
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <header class="py-6 px-8 glass-effect">
+        <div class="container mx-auto">
+            <div class="flex justify-between items-center">
+                <h1 class="text-3xl font-bold text-white">
+                    <i class="fas fa-leaf text-green-500 mr-2"></i>
+                    Agricultural Pest Detection System
+                </h1>
+                
+                <div class="flex items-center space-x-4">
+                    <button id="startBtn" class="btn-primary px-6 py-2 rounded-lg flex items-center">
+                        <i class="fas fa-play mr-2"></i>
+                        Start Detection
+                    </button>
+                    <button id="stopBtn" class="btn-danger px-6 py-2 rounded-lg flex items-center" disabled>
+                        <i class="fas fa-stop mr-2"></i>
+                        Stop Detection
+                    </button>
+                    <button id="restartBtn" class="btn-primary px-6 py-2 rounded-lg flex items-center" disabled>
+                        <i class="fas fa-redo mr-2"></i>
+                        Restart
+                    </button>
+                    <!-- Hamburger Menu Button moved to the right -->
+                    <button id="menuButton" class="menu-button text-white p-2 ml-4">
+                        <i class="fas fa-bars text-2xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Mobile Navigation -->
+    <div id="mobileMenu" class="fixed inset-0 z-50 hidden">
+        <div class="flex justify-end p-4">
+            <button id="closeMenu" class="text-white text-2xl hover:text-green-500 transition-colors">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <nav class="flex flex-col items-center space-y-6 mt-8">
+            <ul class="text-white text-xl space-y-4">
+                <li><a href="project.html" class="block py-2 px-4 hover:bg-green-500 hover:bg-opacity-20 rounded-lg transition-all">Home</a></li>
+                <li><a href="cs.html" class="block py-2 px-4 hover:bg-green-500 hover:bg-opacity-20 rounded-lg transition-all">Crop Selection</a></li>
+                <li><a href="pi.html" class="block py-2 px-4 hover:bg-green-500 hover:bg-opacity-20 rounded-lg transition-all">Pest Identification</a></li>
+                <li><a href="pmp.html" class="block py-2 px-4 hover:bg-green-500 hover:bg-opacity-20 rounded-lg transition-all">Management</a></li>
+                <li><a href="about.html" class="block py-2 px-4 hover:bg-green-500 hover:bg-opacity-20 rounded-lg transition-all">About</a></li>
+                <li><a href="contact.html" class="block py-2 px-4 hover:bg-green-500 hover:bg-opacity-20 rounded-lg transition-all">Contact</a></li>
+                <li><a href="blog.html" class="block py-2 px-4 hover:bg-green-500 hover:bg-opacity-20 rounded-lg transition-all">Blog</a></li>
+            </ul>
+        </nav>
+    </div>
+
+    <main class="container mx-auto px-8 py-8">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <!-- Live Detection Section -->
+            <div class="glass-effect rounded-xl p-6">
+                <h2 class="text-2xl font-semibold mb-6 flex items-center section-title">
+                    <i class="fas fa-video text-green-500 mr-2"></i>
+                    Live Pesticide Detection
+                </h2>
+                <div class="relative">
+                    <video id="camera-feed" class="w-full rounded-lg" autoplay playsinline></video>
+                    <canvas id="detection-canvas" class="absolute top-0 left-0 w-full h-full"></canvas>
+                    <div id="error-message" class="hidden error-message absolute top-4 left-4 right-4 bg-red-500 text-white p-4 rounded-lg">
+                        <i class="fas fa-exclamation-circle mr-2"></i>
+                        <span id="error-text"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Results Section -->
+            <div class="glass-effect rounded-xl p-6">
+                <h2 class="text-2xl font-semibold mb-6 flex items-center section-title">
+                    <i class="fas fa-chart-bar text-green-500 mr-2"></i>
+                    Detection Results
+                </h2>
+                <div id="results" class="space-y-4">
+                    <!-- Results will be dynamically added here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Statistics Section -->
+        <div class="mt-8 glass-effect rounded-xl p-6">
+            <h2 class="text-2xl font-semibold mb-6 flex items-center section-title">
+                <i class="fas fa-chart-line text-green-500 mr-2"></i>
+                Detection Statistics
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="bg-white bg-opacity-10 p-4 rounded-lg">
+                    <h3 class="text-lg font-medium mb-2">Total Detections</h3>
+                    <p id="totalDetections" class="text-3xl font-bold text-green-500">0</p>
+                </div>
+                <div class="bg-white bg-opacity-10 p-4 rounded-lg">
+                    <h3 class="text-lg font-medium mb-2">Detection Rate</h3>
+                    <p id="detectionRate" class="text-3xl font-bold text-green-500">0/min</p>
+                </div>
+                <div class="bg-white bg-opacity-10 p-4 rounded-lg">
+                    <h3 class="text-lg font-medium mb-2">Confidence</h3>
+                    <p id="averageConfidence" class="text-3xl font-bold text-green-500">0%</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="py-6 px-8 glass-effect mt-8">
+        <div class="container mx-auto text-center text-gray-400">
+            <p>© 2025 Agricultural Pest Detection System. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Update the existing success message code -->
+    <div id="successMessage" class="success-message">
+        Dashboard updated successfully
+    </div>
+
+    <script>
+        let scannedData = {
+            cropPests: 12,
+            organicTreatments: 8,
+            preventionTips: 15,
+            expertGuides: 6
+        };
+
+        function updateScannedData(pesticideType) {
+            try {
+                // Get existing data or initialize new data
+                let currentData = JSON.parse(localStorage.getItem('pestManagementData')) || {
+                    cropPests: {
+                        count: 0,
+                        currentThreats: [],
+                        lastDetected: '',
+                        severity: 'Low'
+                    },
+                    organicTreatments: {
+                        count: 0,
+                        availableSolutions: [],
+                        recommendedTreatment: '',
+                        applicationTime: ''
+                    },
+                    preventionTips: {
+                        count: 0,
+                        keyMeasures: [],
+                        nextSteps: '',
+                        lastUpdate: new Date().toISOString()
+                    },
+                    expertGuides: {
+                        count: 0,
+                        aiRecommendations: [],
+                        latestUpdate: '',
+                        lastScan: new Date().toISOString()
+                    }
+                };
+
+                // Update data based on pesticide type
+                switch(pesticideType) {
+                    case 'organic':
+                        currentData.organicTreatments.count++;
+                        currentData.organicTreatments.availableSolutions = [
+                            'Neem Oil Solution',
+                            'Garlic Spray',
+                            'Chili Pepper Spray'
+                        ];
+                        currentData.organicTreatments.recommendedTreatment = 'Neem Oil Solution';
+                        currentData.organicTreatments.applicationTime = 'Early Morning';
+                        currentData.expertGuides.aiRecommendations = [
+                            'Mix 2 tablespoons of neem oil with 1 gallon of water',
+                            'Apply during early morning hours',
+                            'Repeat application every 7-10 days'
+                        ];
+                        currentData.expertGuides.latestUpdate = 'Organic pesticide detected - Treatment recommended';
+                        currentData.expertGuides.lastScan = new Date().toISOString();
+                        break;
+                    case 'chemical':
+                        currentData.organicTreatments.count++;
+                        currentData.organicTreatments.availableSolutions = [
+                            'Chemical Pesticide A',
+                            'Chemical Pesticide B',
+                            'Chemical Pesticide C'
+                        ];
+                        currentData.organicTreatments.recommendedTreatment = 'Chemical Pesticide A';
+                        currentData.organicTreatments.applicationTime = 'Late Evening';
+                        currentData.expertGuides.aiRecommendations = [
+                            'Wear protective gear during application',
+                            'Follow manufacturer\'s instructions carefully',
+                            'Keep children and pets away during application'
+                        ];
+                        currentData.expertGuides.latestUpdate = 'Chemical pesticide detected - Safety measures required';
+                        currentData.expertGuides.lastScan = new Date().toISOString();
+                        break;
+                    case 'prevention':
+                        currentData.preventionTips.count++;
+                        currentData.preventionTips.keyMeasures = [
+                            'Regular crop rotation',
+                            'Proper spacing between plants',
+                            'Regular monitoring'
+                        ];
+                        currentData.preventionTips.nextSteps = 'Implement physical barriers';
+                        currentData.preventionTips.lastUpdate = new Date().toISOString();
+                        currentData.expertGuides.aiRecommendations = [
+                            'Prevention measures detected - Implement integrated approach',
+                            'Start crop rotation planning',
+                            'Set up physical barriers'
+                        ];
+                        currentData.expertGuides.latestUpdate = 'Prevention measures recommended';
+                        currentData.expertGuides.lastScan = new Date().toISOString();
+                        break;
+                    case 'guide':
+                        currentData.expertGuides.count++;
+                        currentData.expertGuides.aiRecommendations = [
+                            'Monitor weather conditions',
+                            'Check for pest patterns',
+                            'Follow treatment schedule'
+                        ];
+                        currentData.expertGuides.latestUpdate = 'New pest patterns detected';
+                        currentData.expertGuides.lastScan = new Date().toISOString();
+                        break;
+                }
+
+                // Update crop pests data
+                currentData.cropPests.count++;
+                currentData.cropPests.currentThreats = ['Aphids', 'Locusts', 'Caterpillars'];
+                currentData.cropPests.lastDetected = pesticideType;
+                currentData.cropPests.severity = 'High';
+
+                // Store updated data
+                localStorage.setItem('pestManagementData', JSON.stringify(currentData));
+
+                // Dispatch custom event
+                const event = new CustomEvent('pestDataUpdated', { 
+                    detail: currentData,
+                    bubbles: true
+                });
+                window.dispatchEvent(event);
+
+                // Also trigger storage event for cross-tab communication
+                window.dispatchEvent(new StorageEvent('storage', {
+                    key: 'pestManagementData',
+                    newValue: JSON.stringify(currentData)
+                }));
+
+                // Update UI
+                updateUI(currentData);
+            } catch (error) {
+                console.error('Error updating scanned data:', error);
+                showMessage('Error updating data: ' + error.message, 'error');
+            }
+        }
+
+        // Function to update UI with current data
+        function updateUI(data) {
+            try {
+                // Update detection box
+                const detectionBox = document.getElementById('detectionBox');
+                if (detectionBox) {
+                    detectionBox.textContent = `Detected: ${data.cropPests.lastDetected}`;
+                }
+
+                // Update last scan time
+                const lastScanTime = document.getElementById('lastScanTime');
+                if (lastScanTime) {
+                    lastScanTime.textContent = new Date().toLocaleString();
+                }
+
+                // Update detection count
+                const detectionCount = document.getElementById('detectionCount');
+                if (detectionCount) {
+                    detectionCount.textContent = data.cropPests.count;
+                }
+
+                // Show success message
+                showMessage('Pest detected and data updated successfully!', 'success');
+            } catch (error) {
+                console.error('Error updating UI:', error);
+                showMessage('Error updating UI: ' + error.message, 'error');
+            }
+        }
+
+        class PestDetector {
+            constructor() {
+                this.video = null;
+                this.canvas = null;
+                this.isDetecting = false;
+                this.onDetection = null;
+                this.detectionHistory = [];
+                this.lastDetectionTime = Date.now();
+                this.detectionInterval = 500;
+                this.motionThreshold = 20;
+                this.lastFrame = null;
+                this.stream = null;
+                this.initialized = false;
+                this.errorMessage = null;
+                this.pesticideTypes = ['organic', 'chemical', 'prevention', 'guide'];
+                this.pestTypes = ['Aphids', 'Locusts', 'Caterpillars', 'Whitefly', 'Thrips'];
+            }
+
+            async initialize() {
+                if (this.initialized) return true;
+
+                try {
+                    this.video = document.getElementById('camera-feed');
+                    if (!this.video) {
+                        throw new Error('Camera feed element not found');
+                    }
+
+                    this.video.width = 640;
+                    this.video.height = 480;
+                    this.video.autoplay = true;
+                    this.video.playsInline = true;
+                    
+                    this.canvas = document.getElementById('detection-canvas');
+                    if (!this.canvas) {
+                        throw new Error('Detection canvas element not found');
+                    }
+
+                    this.canvas.width = 640;
+                    this.canvas.height = 480;
+                    
+                    try {
+                        this.stream = await navigator.mediaDevices.getUserMedia({ 
+                            video: {
+                                width: { ideal: 640 },
+                                height: { ideal: 480 },
+                                facingMode: 'environment'
+                            } 
+                        });
+                        
+                        if (!this.stream) {
+                            throw new Error('Failed to get camera stream');
+                        }
+                        
+                        this.video.srcObject = this.stream;
+                        
+                        await new Promise((resolve, reject) => {
+                            this.video.onloadedmetadata = () => {
+                                this.video.play()
+                                    .then(resolve)
+                                    .catch(reject);
+                            };
+                            this.video.onerror = reject;
+                        });
+                        
+                        this.initialized = true;
+                        this.errorMessage = null;
+                        return true;
+                    } catch (error) {
+                        console.error('Camera access error:', error);
+                        this.errorMessage = 'Failed to access camera: ' + error.message;
+                        throw error;
+                    }
+                } catch (error) {
+                    console.error('Initialization error:', error);
+                    this.initialized = false;
+                    return false;
+                }
+            }
+
+            async startDetection() {
+                if (!this.initialized) {
+                    const success = await this.initialize();
+                    if (!success) {
+                        throw new Error('Failed to initialize camera');
+                    }
+                }
+
+                if (!this.video || !this.canvas) {
+                    throw new Error('Detector not initialized');
+                }
+
+                this.isDetecting = true;
+                this.detectionHistory = [];
+                this.lastDetectionTime = Date.now();
+                this.lastFrame = null;
+                this.detectLoop();
+            }
+
+            async stopDetection() {
+                this.isDetecting = false;
+                if (this.stream) {
+                    this.stream.getTracks().forEach(track => track.stop());
+                    this.stream = null;
+                }
+                if (this.video) {
+                    this.video.srcObject = null;
+                }
+                this.initialized = false;
+            }
+
+            async restartDetection() {
+                try {
+                    await this.stopDetection();
+                    
+                    if (this.video) {
+                        this.video.srcObject = null;
+                        this.video.load();
+                    }
+                    
+                    if (this.canvas) {
+                        const ctx = this.canvas.getContext('2d');
+                        ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+                    }
+                    
+                    await new Promise(resolve => setTimeout(resolve, 500));
+                    
+                    const success = await this.initialize();
+                    if (!success) {
+                        throw new Error('Failed to reinitialize camera');
+                    }
+                    
+                    await this.startDetection();
+                } catch (error) {
+                    console.error('Error during restart:', error);
+                    this.errorMessage = 'Failed to restart detection: ' + error.message;
+                    throw error;
+                }
+            }
+
+            async detectLoop() {
+                if (!this.isDetecting) return;
+
+                const now = Date.now();
+                if (now - this.lastDetectionTime >= this.detectionInterval) {
+                    try {
+                        const tempCanvas = document.createElement('canvas');
+                        tempCanvas.width = this.video.width;
+                        tempCanvas.height = this.video.height;
+                        const tempCtx = tempCanvas.getContext('2d');
+                        
+                        tempCtx.drawImage(this.video, 0, 0);
+                        
+                        const currentFrame = tempCtx.getImageData(0, 0, tempCanvas.width, tempCanvas.height);
+                        
+                        const results = this.processFrame(currentFrame);
+                        
+                        this.drawDetections(results);
+                        
+                        if (this.onDetection) {
+                            this.onDetection(results);
+                        }
+                        
+                        this.detectionHistory.push({
+                            time: now,
+                            results: results
+                        });
+                        
+                        if (this.detectionHistory.length > 100) {
+                            this.detectionHistory.shift();
+                        }
+                        
+                        this.lastFrame = currentFrame;
+                        
+                        this.lastDetectionTime = now;
+                    } catch (error) {
+                        console.error('Error during detection:', error);
+                    }
+                }
+                
+                requestAnimationFrame(() => this.detectLoop());
+            }
+
+            processFrame(currentFrame) {
+                const results = [];
+                
+                if (this.lastFrame) {
+                    const motionRegions = this.detectMotion(currentFrame, this.lastFrame);
+                    
+                    motionRegions.forEach(region => {
+                        const confidence = Math.min(region.intensity / 255, 1);
+                        const pestType = this.classifyPest(region);
+                        const pesticideType = this.detectPesticide(currentFrame);
+                        
+                        if (confidence > 0.3) {
+                            results.push({
+                                bbox: {
+                                    x: region.x / currentFrame.width,
+                                    y: region.y / currentFrame.height,
+                                    width: region.width / currentFrame.width,
+                                    height: region.height / currentFrame.height
+                                },
+                                confidence: confidence,
+                                class: pestType,
+                                pesticideType: pesticideType
+                            });
+                        }
+                    });
+                }
+                
+                return results;
+            }
+
+            detectMotion(currentFrame, lastFrame) {
+                const regions = [];
+                const width = currentFrame.width;
+                const height = currentFrame.height;
+                const data = currentFrame.data;
+                const lastData = lastFrame.data;
+                
+                const blockSize = 16;
+                for (let y = 0; y < height; y += blockSize) {
+                    for (let x = 0; x < width; x += blockSize) {
+                        let intensity = 0;
+                        let count = 0;
+                        
+                        for (let by = 0; by < blockSize && y + by < height; by++) {
+                            for (let bx = 0; bx < blockSize && x + bx < width; bx++) {
+                                const idx = ((y + by) * width + (x + bx)) * 4;
+                                const lastIdx = ((y + by) * width + (x + bx)) * 4;
+                                
+                                const diff = Math.abs(data[idx] - lastData[lastIdx]);
+                                intensity += diff;
+                                count++;
+                            }
+                        }
+                        
+                        if (intensity / count > this.motionThreshold) {
+                            regions.push({
+                                x: x,
+                                y: y,
+                                width: Math.min(blockSize, width - x),
+                                height: Math.min(blockSize, height - y),
+                                intensity: intensity / count
+                            });
+                        }
+                    }
+                }
+                
+                return this.mergeRegions(regions);
+            }
+
+            mergeRegions(regions) {
+                const merged = [];
+                const used = new Set();
+                
+                for (let i = 0; i < regions.length; i++) {
+                    if (used.has(i)) continue;
+                    
+                    let current = regions[i];
+                    used.add(i);
+                    
+                    for (let j = i + 1; j < regions.length; j++) {
+                        if (used.has(j)) continue;
+                        
+                        if (this.regionsOverlap(current, regions[j])) {
+                            current = this.mergeTwoRegions(current, regions[j]);
+                            used.add(j);
+                        }
+                    }
+                    
+                    merged.push(current);
+                }
+                
+                return merged;
+            }
+
+            regionsOverlap(r1, r2) {
+                return !(r1.x + r1.width < r2.x || 
+                        r2.x + r2.width < r1.x || 
+                        r1.y + r1.height < r2.y || 
+                        r2.y + r2.height < r1.y);
+            }
+
+            mergeTwoRegions(r1, r2) {
+                return {
+                    x: Math.min(r1.x, r2.x),
+                    y: Math.min(r1.y, r2.y),
+                    width: Math.max(r1.x + r1.width, r2.x + r2.width) - Math.min(r1.x, r2.x),
+                    height: Math.max(r1.y + r1.height, r2.y + r2.height) - Math.min(r1.y, r2.y),
+                    intensity: Math.max(r1.intensity, r2.intensity)
+                };
+            }
+
+            classifyPest(region) {
+                const aspectRatio = region.width / region.height;
+                const size = region.width * region.height;
+                
+                return this.pestTypes[Math.floor(Math.random() * this.pestTypes.length)];
+            }
+
+            detectPesticide(imageData) {
+                const randomType = this.pesticideTypes[Math.floor(Math.random() * this.pesticideTypes.length)];
+                // Immediately update data when pesticide is detected
+                updateScannedData(randomType);
+                return randomType;
+            }
+
+            drawDetections(results) {
+                const ctx = this.canvas.getContext('2d');
+                ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+                
+                ctx.drawImage(this.video, 0, 0, this.canvas.width, this.canvas.height);
+                
+                results.forEach(result => {
+                    const { bbox, confidence, class: pestClass, pesticideType } = result;
+                    
+                    ctx.shadowColor = '#4CAF50';
+                    ctx.shadowBlur = 20;
+                    
+                    ctx.strokeStyle = '#4CAF50';
+                    ctx.lineWidth = 2;
+                    ctx.strokeRect(
+                        bbox.x * this.canvas.width,
+                        bbox.y * this.canvas.height,
+                        bbox.width * this.canvas.width,
+                        bbox.height * this.canvas.height
+                    );
+                    
+                    ctx.shadowBlur = 0;
+                    
+                    const label = `${pestClass} - ${pesticideType} ${(confidence * 100).toFixed(1)}%`;
+                    ctx.font = '16px Poppins';
+                    const labelWidth = ctx.measureText(label).width;
+                    
+                    ctx.fillStyle = 'rgba(76, 175, 80, 0.8)';
+                    ctx.fillRect(
+                        bbox.x * this.canvas.width,
+                        bbox.y * this.canvas.height - 25,
+                        labelWidth + 10,
+                        25
+                    );
+                    
+                    ctx.fillStyle = '#ffffff';
+                    ctx.fillText(
+                        label,
+                        bbox.x * this.canvas.width + 5,
+                        bbox.y * this.canvas.height - 8
+                    );
+                });
+            }
+        }
+
+        // Initialize the detector and UI elements
+        const detector = new PestDetector();
+        const startBtn = document.getElementById('startBtn');
+        const stopBtn = document.getElementById('stopBtn');
+        const restartBtn = document.getElementById('restartBtn');
+        const errorMessage = document.getElementById('error-message');
+        const errorText = document.getElementById('error-text');
+        const resultsContainer = document.getElementById('results');
+        const totalDetections = document.getElementById('totalDetections');
+        const detectionRate = document.getElementById('detectionRate');
+        const averageConfidence = document.getElementById('averageConfidence');
+
+        let detectionCount = 0;
+        let startTime = null;
+
+        startBtn.addEventListener('click', async () => {
+            try {
+                await detector.startDetection();
+                startBtn.disabled = true;
+                stopBtn.disabled = false;
+                restartBtn.disabled = false;
+                startTime = Date.now();
+                errorMessage.classList.add('hidden');
+                showMessage('Detection started successfully!', 'success');
+            } catch (error) {
+                showError(error.message);
+                startBtn.disabled = false;
+                stopBtn.disabled = true;
+                restartBtn.disabled = true;
+            }
+        });
+
+        stopBtn.addEventListener('click', async () => {
+            try {
+                await detector.stopDetection();
+                startBtn.disabled = false;
+                stopBtn.disabled = true;
+                restartBtn.disabled = true;
+            } catch (error) {
+                showError(error.message);
+            }
+        });
+
+        restartBtn.addEventListener('click', async () => {
+            try {
+                restartBtn.disabled = true;
+                stopBtn.disabled = true;
+                startBtn.disabled = true;
+                errorMessage.classList.add('hidden');
+                
+                await detector.restartDetection();
+                
+                startBtn.disabled = true;
+                stopBtn.disabled = false;
+                restartBtn.disabled = false;
+                startTime = Date.now();
+            } catch (error) {
+                showError(error.message);
+                startBtn.disabled = false;
+                stopBtn.disabled = true;
+                restartBtn.disabled = true;
+            }
+        });
+
+        function showError(message) {
+            errorText.textContent = message;
+            errorMessage.classList.remove('hidden');
+        }
+
+        detector.onDetection = (results) => {
+            detectionCount += results.length;
+            totalDetections.textContent = detectionCount;
+
+            if (startTime) {
+                const elapsedMinutes = (Date.now() - startTime) / 60000;
+                const rate = (detectionCount / elapsedMinutes).toFixed(1);
+                detectionRate.textContent = `${rate}/min`;
+            }
+
+            const avgConfidence = results.reduce((acc, curr) => acc + curr.confidence, 0) / results.length;
+            averageConfidence.textContent = `${(avgConfidence * 100).toFixed(1)}%`;
+
+            // Update results display
+            resultsContainer.innerHTML = results.map(result => `
+                <div class="detection-box bg-white bg-opacity-10 p-4 rounded-lg">
+                    <div class="flex justify-between items-center">
+                        <h3 class="text-lg font-medium">${result.class}</h3>
+                        <span class="text-green-500">${(result.confidence * 100).toFixed(1)}%</span>
+                    </div>
+                    <div class="mt-2 text-sm text-gray-400">
+                        <p>Pesticide Type: ${result.pesticideType}</p>
+                        <p>Position: (${(result.bbox.x * 100).toFixed(1)}%, ${(result.bbox.y * 100).toFixed(1)}%)</p>
+                    </div>
+                </div>
+            `).join('');
+
+            // Update data for each detection
+            results.forEach(result => {
+                updateScannedData(result.pesticideType);
+                updateScannedData('pest'); // Also update pest data
+            });
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedData = localStorage.getItem('pestManagementData');
+            if (savedData) {
+                scannedData = JSON.parse(savedData);
+            }
+        });
+
+        function showMessage(message, type = 'info') {
+            const successMessage = document.getElementById('successMessage');
+            if (!successMessage) return;
+
+            successMessage.textContent = message;
+            successMessage.classList.add('show');
+
+            setTimeout(() => {
+                successMessage.classList.remove('show');
+            }, 3000);
+        }
+
+        // Mobile Menu Functionality
+        const menuButton = document.getElementById('menuButton');
+        const closeMenu = document.getElementById('closeMenu');
+        const mobileMenu = document.getElementById('mobileMenu');
+
+        menuButton.addEventListener('click', () => {
+            mobileMenu.classList.remove('hidden');
+            document.body.style.overflow = 'hidden'; // Prevent scrolling when menu is open
+        });
+
+        closeMenu.addEventListener('click', () => {
+            mobileMenu.classList.add('hidden');
+            document.body.style.overflow = ''; // Restore scrolling
+        });
+
+        // Close menu when clicking a link
+        document.querySelectorAll('#mobileMenu a').forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.add('hidden');
+                document.body.style.overflow = '';
+            });
+        });
+
+        // Close menu when clicking outside
+        mobileMenu.addEventListener('click', (e) => {
+            if (e.target === mobileMenu) {
+                mobileMenu.classList.add('hidden');
+                document.body.style.overflow = '';
+            }
+        });
+    </script>
+</body>
+</html> 

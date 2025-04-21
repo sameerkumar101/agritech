@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="en" x-data="{ darkMode: localStorage.getItem('dark') === 'true', lang: 'en' }" :class="{ 'dark': darkMode }">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgriTech Blog</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/alpinejs/3.10.5/cdn.min.js" defer></script>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 50%, #d1fae5 100%);
+            min-height: 100vh;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .hero-section {
+            background: linear-gradient(120deg, #059669, #10b981, #34d399);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('https://images.unsplash.com/photo-1523348837708-15d4a09cfac2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxfDB8MXxyYW5kb218MHx8ZmFybWluZ3x8fHx8fDE2MjY4NjQ0MDE&ixlib=rb-1.2.1&q=80&w=1080') center/cover;
+            opacity: 0.2;
+        }
+
+        .featured-tag {
+            background: linear-gradient(120deg, #f59e0b, #f97316);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 999px;
+            font-size: 0.875rem;
+        }
+
+        .category-tag {
+            background: linear-gradient(120deg, #059669, #10b981);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 999px;
+            font-size: 0.875rem;
+            transition: all 0.3s ease;
+        }
+
+        .search-bar {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .newsletter-section {
+            background: linear-gradient(120deg, #059669, #10b981);
+            color: white;
+        }
+
+        .blog-title {
+            background: linear-gradient(120deg, #059669, #10b981);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .category-tag:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(5, 150, 105, 0.2);
+        }
+
+        .read-more-btn {
+            background: linear-gradient(120deg, #059669, #10b981);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 999px;
+            transition: all 0.3s ease;
+        }
+
+        .read-more-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(5, 150, 105, 0.2);
+        }
+
+        .featured-image {
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .featured-image:hover {
+            transform: scale(1.02);
+        }
+
+        .nav-link {
+            position: relative;
+            transition: color 0.3s ease;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: #059669;
+            transition: width 0.3s ease;
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        .fade-in { opacity: 0; transform: translateY(20px); transition: opacity 0.6s ease-out, transform 0.6s ease-out; }
+        .fade-in.visible { opacity: 1; transform: translateY(0); }
+        .dark { background-color: #1a202c; color: white; }
+        .dark body, .dark nav, .dark section, .dark footer { background-color: #1a202c; color: white; }
+
+        /* Dark mode color modifications */
+        .dark .text-gray-600,
+        .dark .text-gray-700 {
+            color: #a5f3fc; /* light blue */
+        }
+
+        .dark .text-gray-500 {
+            color: #fef08a; /* light yellow */
+        }
+
+        .dark .blog-title {
+            background: linear-gradient(120deg, #86efac, #4ade80);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .dark .featured-tag {
+            background: linear-gradient(120deg, #fbbf24, #f59e0b);
+        }
+
+        .dark .category-tag {
+            background: linear-gradient(120deg, #34d399, #10b981);
+        }
+
+        .dark .glass-card {
+            background: rgba(17, 24, 39, 0.8);
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .dark .nav-link:hover {
+            color: #86efac; /* light green */
+        }
+
+        .dark .read-more-btn {
+            background: linear-gradient(120deg, #34d399, #10b981);
+        }
+
+        .dark .search-bar {
+            background: rgba(17, 24, 39, 0.9);
+        }
+
+        .dark .search-bar input {
+            color: #e5e7eb;
+            background: transparent;
+        }
+
+        .dark .search-bar input::placeholder {
+            color: #9ca3af;
+        }
+
+        .dark .newsletter-section {
+            background: linear-gradient(120deg, #065f46, #047857);
+        }
+
+        .dark h2.text-2xl {
+            color: #86efac; /* light green */
+        }
+
+        .dark h3.font-semibold {
+            color: #93c5fd; /* light blue */
+        }
+
+        .dark .text-green-600 {
+            color: #6ee7b7; /* lighter green */
+        }
+
+        .dark .text-green-700 {
+            color: #34d399; /* medium green */
+        }
+
+        .dark footer {
+            background: #065f46;
+        }
+
+        .dark footer a:hover {
+            color: #86efac;
+        }
+
+        /* Author card dark mode styles */
+        .dark .glass-card .text-gray-500 {
+            color: #fde68a; /* warm yellow */
+        }
+
+        .dark .glass-card .text-gray-600 {
+            color: #93c5fd; /* light blue */
+        }
+
+        /* Resource card dark mode styles */
+        .dark .glass-card:hover {
+            background: rgba(17, 24, 39, 0.95);
+            transform: translateY(-5px);
+        }
+
+        /* Weather section dark mode */
+        .dark .bg-white.dark\:bg-gray-800 {
+            background: rgba(17, 24, 39, 0.9);
+        }
+
+        /* Blog post titles in dark mode */
+        .dark .text-xl.font-bold {
+            color: #93c5fd; /* light blue */
+        }
+
+        /* Navigation text colors in dark mode */
+        .dark nav ul li a {
+            color: #e5e7eb;
+        }
+
+        .dark nav ul li a:hover {
+            color: #86efac;
+        }
+
+        /* Hero section text in dark mode */
+        .dark .hero-section {
+            background: linear-gradient(120deg, #065f46, #047857, #065f46);
+        }
+
+        .dark .hero-section h1 {
+            color: #f0fdf4;
+        }
+
+        .dark .hero-section p {
+            color: #d1fae5;
+        }
+
+        /* Button hover effects in dark mode */
+        .dark .read-more-btn:hover {
+            background: linear-gradient(120deg, #059669, #047857);
+            box-shadow: 0 4px 12px rgba(52, 211, 153, 0.2);
+        }
+
+        /* Category tags hover in dark mode */
+        .dark .category-tag:hover {
+            box-shadow: 0 4px 12px rgba(52, 211, 153, 0.3);
+        }
+
+        /* Newsletter input styles */
+        .newsletter-section input[type="email"] {
+            background: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Dark mode newsletter styles */
+        .dark .newsletter-section input[type="email"] {
+            background: rgba(31, 41, 55, 0.9);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+            color: #e5e7eb;
+        }
+
+        .dark .newsletter-section input[type="email"]::placeholder {
+            color: #9ca3af;
+        }
+
+        .dark .newsletter-section input[type="email"]:focus {
+            border-color: #34d399;
+            background: rgba(31, 41, 55, 0.95);
+        }
+
+        .dark .newsletter-section button[type="submit"] {
+            background: #059669;
+            color: white;
+        }
+
+        .dark .newsletter-section button[type="submit"]:hover {
+            background: #047857;
+        }
+
+        #subscribePopup {
+            z-index: 1000;
+            backdrop-filter: blur(4px);
+        }
+
+        #subscribePopup > div {
+            transform: scale(0.9);
+            opacity: 0;
+            animation: popupIn 0.3s ease forwards;
+        }
+
+        @keyframes popupIn {
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .dark #subscribePopup > div {
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+    </style>
+</head>
+<body x-bind:class="{'dark': darkMode}" class="bg-gray-100 dark:bg-gray-900 dark:text-white font-sans">
+    <!-- Navigation Bar -->
+    <nav class="bg-white dark:bg-gray-800 shadow-md p-4 flex justify-between items-center sticky top-0 z-50">
+        <div class="flex items-center space-x-4">
+            <i class="fas fa-leaf text-green-600 text-2xl"></i>
+            <a href="#" class="text-green-700 font-bold text-2xl">AgriTech</a>
+        </div>
+        <ul class="flex space-x-6 text-gray-700 dark:text-white">
+            <li><a href="project.html" class="hover:text-green-600">Home</a></li>
+            <li><a href="cs.html" class="hover:text-green-600">Crop Selection</a></li>
+            <li><a href="pi.html" class="hover:text-green-600">Pest Identification</a></li>
+            <li><a href="pmp.html" class="hover:text-green-600">Management</a></li>
+            <li><a href="about.html" class="hover:text-green-600">About</a></li>
+            <li><a href="contact.html" class="hover:text-green-600">Contact</a></li>
+            <li><a href="blog.html" class="hover:text-green-600">Blog</a></li>
+        </ul>
+        <div class="flex items-center">
+            <!-- Login Button (shown when not logged in) -->
+            <a href="login.html" id="loginBtn" class="login-btn px-6 py-2 bg-gradient-to-r from-green-600 to-green-500 text-white rounded-full font-semibold flex items-center space-x-2 hover:shadow-lg transform transition-all duration-300 hover:-translate-y-1">
+                <i class="fas fa-user-circle"></i>
+                <span>Login</span>
+            </a>
+            
+            <!-- User Dashboard (shown when logged in) -->
+            <div id="userDashboard" class="hidden relative">
+                <button id="userMenuBtn" class="flex items-center space-x-3 bg-green-50 px-4 py-2 rounded-lg hover:bg-green-100 transition-colors">
+                    <i class="fas fa-user-circle text-green-600"></i>
+                    <span id="username" class="text-green-700 font-medium"></span>
+                    <i class="fas fa-chevron-down text-green-600 text-sm"></i>
+                </button>
+                <div id="userDropdown" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2">
+                    <button onclick="logout()" class="flex items-center w-full px-4 py-2 text-red-600 hover:bg-red-50">
+                        <i class="fas fa-sign-out-alt w-5"></i>
+                        <span>Logout</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="bg-green-500 text-white py-24 text-center">
+        <h1 class="text-5xl font-extrabold" x-text="translations[lang].heroTitle">Welcome to the Agritec Blog</h1>
+        <p class="mt-4 text-xl" x-text="translations[lang].heroSubtitle">Your source for the latest farming tips, news, and updates.</p>
+    </header>
+
+    <!-- Search Bar Section -->
+    <div class="container mx-auto px-4 py-6">
+        <div class="search-bar rounded-full p-2 flex items-center max-w-2xl mx-auto">
+            <input type="text" placeholder="Search articles..." class="w-full px-6 py-3 rounded-full focus:outline-none">
+            <button class="bg-green-600 text-white px-6 py-3 rounded-full hover:bg-green-700 transition">Search</button>
+        </div>
+    </div>
+
+    <!-- Featured Article -->
+    <section class="container mx-auto mt-8 px-4">
+        <div class="glass-card rounded-xl overflow-hidden">
+            <div class="md:flex">
+                <div class="md:w-1/2">
+                    <img src="https://source.unsplash.com/1600x900/?sustainable-farming" alt="Featured Article" class="h-full w-full object-cover">
+                </div>
+                <div class="md:w-1/2 p-8">
+                    <span class="featured-tag mb-4 inline-block">Featured</span>
+                    <h2 class="text-3xl font-bold mb-4">Revolutionary Farming Techniques for 2024</h2>
+                    <p class="text-gray-600 mb-6">Discover how modern technology and traditional wisdom are combining to create sustainable farming practices that increase yields while protecting our environment.</p>
+                    <div class="flex items-center mb-6">
+                        <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Author" class="w-12 h-12 rounded-full">
+                        <div class="ml-4">
+                            <p class="font-semibold">Dr. John Smith</p>
+                            <p class="text-gray-500">Agricultural Scientist</p>
+                            <a href="https://scholar.google.com" class="text-green-600 hover:text-green-700 text-sm">View Publications</a>
+                        </div>
+                    </div>
+                    <a href="https://en.wikipedia.org/wiki/Sustainable_agriculture" target="_blank" class="read-more-btn inline-block">Read Full Article</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Popular Categories -->
+    <section class="container mx-auto mt-12 px-4">
+        <h2 class="text-2xl font-bold mb-6">Popular Categories</h2>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <a href="https://en.wikipedia.org/wiki/Organic_farming" target="_blank" class="glass-card p-6 text-center rounded-xl hover:transform hover:scale-105 transition">
+                <i class="fas fa-seedling text-3xl text-green-600 mb-3"></i>
+                <h3 class="font-semibold">Organic Farming</h3>
+                <p class="text-sm text-gray-500">125 Articles</p>
+            </a>
+            <a href="https://en.wikipedia.org/wiki/Hydroponics" target="_blank" class="glass-card p-6 text-center rounded-xl hover:transform hover:scale-105 transition">
+                <i class="fas fa-tint text-3xl text-blue-600 mb-3"></i>
+                <h3 class="font-semibold">Hydroponics</h3>
+                <p class="text-sm text-gray-500">98 Articles</p>
+            </a>
+            <a href="https://en.wikipedia.org/wiki/Smart_agriculture" target="_blank" class="glass-card p-6 text-center rounded-xl hover:transform hover:scale-105 transition">
+                <i class="fas fa-microchip text-3xl text-purple-600 mb-3"></i>
+                <h3 class="font-semibold">Smart Farming</h3>
+                <p class="text-sm text-gray-500">156 Articles</p>
+            </a>
+            <a href="https://en.wikipedia.org/wiki/Crop_rotation" target="_blank" class="glass-card p-6 text-center rounded-xl hover:transform hover:scale-105 transition">
+                <i class="fas fa-sync text-3xl text-orange-600 mb-3"></i>
+                <h3 class="font-semibold">Crop Rotation</h3>
+                <p class="text-sm text-gray-500">87 Articles</p>
+            </a>
+        </div>
+    </section>
+
+    <!-- Latest Articles Grid -->
+    <section class="container mx-auto mt-12 px-4">
+        <h2 class="text-2xl font-bold mb-6">Latest Articles</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div class="glass-card rounded-xl overflow-hidden">
+                <img src="https://source.unsplash.com/800x600/?vertical-farming" alt="Vertical Farming" class="w-full h-48 object-cover">
+                <div class="p-6">
+                    <a href="https://en.wikipedia.org/wiki/Vertical_farming" target="_blank" class="text-xl font-bold hover:text-green-600">The Rise of Vertical Farming</a>
+                    <p class="text-gray-600 mt-2">Explore how vertical farming is revolutionizing urban agriculture.</p>
+                    <a href="https://www.sciencedirect.com/science/article/abs/pii/S0304423819303243" target="_blank" class="text-green-600 hover:text-green-700 mt-4 inline-block">Research Paper →</a>
+                </div>
+            </div>
+
+            <div class="glass-card rounded-xl overflow-hidden">
+                <img src="https://source.unsplash.com/800x600/?drone-farming" alt="Drone Technology" class="w-full h-48 object-cover">
+                <div class="p-6">
+                    <a href="https://en.wikipedia.org/wiki/Agricultural_drone" target="_blank" class="text-xl font-bold hover:text-green-600">Drone Technology in Agriculture</a>
+                    <p class="text-gray-600 mt-2">How drones are transforming modern farming practices.</p>
+                    <a href="https://www.fao.org/3/ca5449en/ca5449en.pdf" target="_blank" class="text-green-600 hover:text-green-700 mt-4 inline-block">FAO Report →</a>
+                </div>
+            </div>
+
+            <div class="glass-card rounded-xl overflow-hidden">
+                <img src="https://source.unsplash.com/800x600/?soil-conservation" alt="Soil Conservation" class="w-full h-48 object-cover">
+                <div class="p-6">
+                    <a href="https://en.wikipedia.org/wiki/Soil_conservation" target="_blank" class="text-xl font-bold hover:text-green-600">Soil Conservation Techniques</a>
+                    <p class="text-gray-600 mt-2">Essential practices for maintaining soil health.</p>
+                    <a href="https://www.nrcs.usda.gov/conservation-basics/conservation-by-state" target="_blank" class="text-green-600 hover:text-green-700 mt-4 inline-block">USDA Resources →</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Newsletter Section -->
+    <section class="newsletter-section mt-16 py-12">
+        <div class="container mx-auto px-4 text-center">
+            <h2 class="text-3xl font-bold mb-4">Stay Updated with Farming Insights</h2>
+            <p class="mb-8 max-w-2xl mx-auto">Join our community of farmers and receive weekly updates on sustainable farming practices, market trends, and expert advice.</p>
+            <form id="subscribeForm" class="max-w-md mx-auto flex gap-4">
+                <input 
+                    type="email" 
+                    id="emailInput"
+                    placeholder="Enter your email" 
+                    required
+                    class="flex-1 px-6 py-3 rounded-full focus:outline-none border-2 border-transparent focus:border-green-500 dark:bg-gray-800 dark:text-white dark:placeholder-gray-400 transition-colors"
+                >
+                <button 
+                    type="submit" 
+                    class="bg-white text-green-600 px-8 py-3 rounded-full hover:bg-gray-100 transition dark:bg-green-600 dark:text-white dark:hover:bg-green-700"
+                >
+                    Subscribe
+                </button>
+            </form>
+        </div>
+    </section>
+
+    <!-- Author Section -->
+    <section class="container mx-auto mt-16 px-4">
+        <h2 class="text-2xl font-bold mb-6">Meet Our Expert Authors</h2>
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+            <div class="glass-card p-6 text-center rounded-xl">
+                <img src="https://randomuser.me/api/portraits/women/45.jpg" alt="Author" class="w-24 h-24 rounded-full mx-auto mb-4">
+                <h3 class="font-semibold">Dr. Sarah Johnson</h3>
+                <p class="text-gray-500 mb-3">Soil Expert</p>
+                <p class="text-sm text-gray-600 mb-4">20+ years experience in sustainable soil management</p>
+                <div class="flex justify-center space-x-3">
+                    <a href="https://www.researchgate.net/" target="_blank" class="text-green-600 hover:text-green-700">ResearchGate</a>
+                    <a href="https://scholar.google.com/" target="_blank" class="text-green-600 hover:text-green-700">Google Scholar</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Useful Resources Section -->
+    <section class="container mx-auto mt-12 px-4 mb-16">
+        <h2 class="text-2xl font-bold mb-6">Useful Resources</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <a href="https://www.fao.org/home/en" target="_blank" class="glass-card p-4 hover:transform hover:scale-105 transition">
+                <h3 class="font-semibold">FAO Resources</h3>
+                <p class="text-sm text-gray-600">Food and Agriculture Organization</p>
+            </a>
+            <a href="https://farmer.gov.in/" target="_blank" class="glass-card p-4 hover:transform hover:scale-105 transition">
+                <h3 class="font-semibold">Farmer Portal</h3>
+                <p class="text-sm text-gray-600">Government of India Agriculture Portal</p>
+            </a>
+            <a href="https://www.agricoop.nic.in/" target="_blank" class="glass-card p-4 hover:transform hover:scale-105 transition">
+                <h3 class="font-semibold">Agriculture Ministry</h3>
+                <p class="text-sm text-gray-600">Ministry of Agriculture & Farmers Welfare</p>
+            </a>
+            <a href="https://icar.org.in/" target="_blank" class="glass-card p-4 hover:transform hover:scale-105 transition">
+                <h3 class="font-semibold">ICAR</h3>
+                <p class="text-sm text-gray-600">Indian Council of Agricultural Research</p>
+            </a>
+        </div>
+    </section>
+
+    <!-- Weather Update Section -->
+    <section class="container mx-auto mt-10 px-4">
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+            <h2 class="text-2xl font-bold">Weather Update</h2>
+            <p class="text-gray-700 dark:text-gray-300">Check the latest weather forecast for your region</p>
+            <a href="https://openweathermap.org/" target="_blank" class="mt-4 inline-block bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">View Forecast</a>
+            <a href="https://farmer.gov.in/WeatherReport/weatherreport.aspx" target="_blank" class="mt-4 ml-4 inline-block bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Indian Agriculture Weather</a>
+        </div>
+    </section>
+
+    <!-- Blog Posts Section with Videos -->
+    <section class="container mx-auto mt-10 px-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div class="fade-in bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden p-6">
+            <video class="w-full h-48 object-cover" controls>
+                <source src="video1.mp4" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+            <h2 class="text-2xl font-bold mt-4" x-text="translations[lang].blogPost1Title">10 Tips for Sustainable Farming</h2>
+            <p class="text-gray-700 dark:text-gray-300" x-text="translations[lang].blogPost1Description">Learn how to farm sustainably with these 10 easy tips.</p>
+            <a href="#" class="mt-4 inline-block bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600" x-text="translations[lang].readMore">Read More</a>
+        </div>
+
+        <div class="fade-in bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden p-6">
+            <video class="w-full h-48 object-cover" controls>
+                <source src="video2.mp4" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+            <h2 class="text-2xl font-bold mt-4" x-text="translations[lang].blogPost2Title">The Future of Organic Farming</h2>
+            <p class="text-gray-700 dark:text-gray-300" x-text="translations[lang].blogPost2Description">Discover the future of organic farming.</p>
+            <a href="#" class="mt-4 inline-block bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600" x-text="translations[lang].readMore">Read More</a>
+        </div>
+    </section>
+
+    <!-- Community Forum Section -->
+    <section class="container mx-auto mt-10 px-4">
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+            <h2 class="text-2xl font-bold" x-text="translations[lang].communityTitle">Join Our Community</h2>
+            <p class="text-gray-700 dark:text-gray-300" x-text="translations[lang].communityDescription">Connect with other farmers, share your experiences, and get expert advice.</p>
+            <a href="#" class="mt-4 inline-block bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600" x-text="translations[lang].communityButton">Visit Forum</a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-green-700 text-white mt-20 py-10 text-center">
+        <p x-text="translations[lang].footerText">&copy; 2025 Agritec. All rights reserved.</p>
+        <div class="mt-4">
+            <a href="#" class="mx-2 hover:text-green-200" x-text="translations[lang].privacyPolicy">Privacy Policy</a>
+            <a href="#" class="mx-2 hover:text-green-200" x-text="translations[lang].termsOfService">Terms of Service</a>
+        </div>
+    </footer>
+
+    <!-- Add this success popup div -->
+    <div id="thankYouPopup" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50">
+        <div class="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg max-w-md w-full mx-4">
+            <h3 class="text-2xl font-bold mb-4 text-green-600 dark:text-green-400">Thank You!</h3>
+            <p class="text-gray-700 dark:text-gray-300 mb-6">Thank you for subscribing to our newsletter. We'll keep you updated with the latest farming insights!</p>
+            <button onclick="closeThankYouPopup()" class="bg-green-600 text-white px-6 py-2 rounded-full hover:bg-green-700 transition">Close</button>
+        </div>
+    </div>
+
+    <script>
+        // Language Translations
+        const translations = {
+    en: {
+        heroTitle: "Welcome to the Agritec Blog",
+        heroSubtitle: "Your source for the latest farming tips, news, and updates.",
+        weatherTitle: "Weather Update",
+        weatherDescription: "Check the latest weather forecast for your region to plan your farming activities.",
+        weatherButton: "View Forecast",
+        blogPost1Title: "10 Tips for Sustainable Farming",
+        blogPost1Description: "Learn how to farm sustainably with these 10 easy tips.",
+        blogPost2Title: "The Future of Organic Farming",
+        blogPost2Description: "Discover the future of organic farming.",
+        readMore: "Read More",
+        communityTitle: "Join Our Community",
+        communityDescription: "Connect with other farmers, share your experiences, and get expert advice.",
+        communityButton: "Visit Forum",
+        footerText: "© 2025 Agritec. All rights reserved.",
+        privacyPolicy: "Privacy Policy",
+        termsOfService: "Terms of Service"
+    },
+    hi: {
+        heroTitle: "अग्रिटेक ब्लॉग में आपका स्वागत है",
+        heroSubtitle: "नवीनतम कृषि युक्तियों, समाचार और अपडेट के लिए आपका स्रोत।",
+        weatherTitle: "मौसम अपडेट",
+        weatherDescription: "अपने क्षेत्र के लिए नवीनतम मौसम पूर्वानुमान की जाँच करें।",
+        weatherButton: "पूर्वानुमान देखें",
+        blogPost1Title: "टिकाऊ खेती के 10 टिप्स",
+        blogPost1Description: "इन 10 आसान युक्तियों के साथ टिकाऊ खेती करना सीखें।",
+        blogPost2Title: "जैविक खेती का भविष्य",
+        blogPost2Description: "जैविक खेती के भविष्य की खोज करें।",
+        readMore: "और पढ़ें",
+        communityTitle: "हमारे समुदाय से जुड़ें",
+        communityDescription: "अन्य किसानों से जुड़ें, अपने अनुभव साझा करें और विशेषज्ञ सलाह प्राप्त करें।",
+        communityButton: "फोरम पर जाएं",
+        footerText: "© 2025 अग्रिटेक। सर्वाधिकार सुरक्षित।",
+        privacyPolicy: "गोपनीयता नीति",
+        termsOfService: "सेवा की शर्तें"
+    }
+};
+
+function changeLanguage() {
+    const lang = document.querySelector('select').value;
+    document.documentElement.lang = lang;
+    const elements = document.querySelectorAll("[x-text]");
+    elements.forEach(el => {
+        const key = el.getAttribute("x-text").replace("translations[lang].", "");
+        el.textContent = translations[lang][key] || el.textContent;
+    });
+}
+
+document.addEventListener("DOMContentLoaded", function() {
+    const elements = document.querySelectorAll(".fade-in");
+    const observer = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add("visible");
+            }
+        });
+    });
+    elements.forEach(el => observer.observe(el));
+});
+
+function updateDarkMode() {
+    const isDark = document.documentElement.classList.contains('dark');
+    const cards = document.querySelectorAll('.glass-card');
+    
+    cards.forEach(card => {
+        if (isDark) {
+            card.style.boxShadow = '0 8px 32px 0 rgba(52, 211, 153, 0.1)';
+        } else {
+            card.style.boxShadow = '0 8px 32px 0 rgba(31, 38, 135, 0.1)';
+        }
+    });
+}
+
+document.querySelector('[x-data]').addEventListener('click', function(e) {
+    if (e.target.matches('[x-on\\:click]')) {
+        setTimeout(updateDarkMode, 0);
+    }
+});
+
+document.addEventListener('DOMContentLoaded', updateDarkMode);
+
+document.getElementById('subscribeForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const email = document.getElementById('emailInput').value;
+    
+    // Email validation
+    if (!email || !email.includes('@') || !email.includes('.')) {
+        alert('Please enter a valid email address');
+        return;
+    }
+
+    // Simulate sending email (since we're not using PHP directly in the HTML)
+    if (email === 'siddhartha6541@gmail.com' || email === 'siddharthapanigrahi836@gmail.com') {
+        showThankYouPopup();
+        document.getElementById('emailInput').value = '';
+    } else {
+        alert('Please use a valid email address');
+    }
+});
+
+function showThankYouPopup() {
+    document.getElementById('thankYouPopup').classList.remove('hidden');
+}
+
+function closeThankYouPopup() {
+    document.getElementById('thankYouPopup').classList.add('hidden');
+}
+
+// Close popup when clicking outside
+document.getElementById('thankYouPopup').addEventListener('click', function(e) {
+    if (e.target === this) {
+        closeThankYouPopup();
+    }
+});
+
+// Check login status and handle user dashboard
+document.addEventListener('DOMContentLoaded', function() {
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    const loginBtn = document.getElementById('loginBtn');
+    const userDashboard = document.getElementById('userDashboard');
+    const userMenuBtn = document.getElementById('userMenuBtn');
+    const userDropdown = document.getElementById('userDropdown');
+    const username = document.getElementById('username');
+
+    if (currentUser) {
+        loginBtn.classList.add('hidden');
+        userDashboard.classList.remove('hidden');
+        username.textContent = currentUser.username;
+
+        // Toggle dropdown when clicking user menu button
+        userMenuBtn.addEventListener('click', () => {
+            userDropdown.classList.toggle('hidden');
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!userDashboard.contains(e.target)) {
+                userDropdown.classList.add('hidden');
+            }
+        });
+    } else {
+        loginBtn.classList.remove('hidden');
+        userDashboard.classList.add('hidden');
+    }
+});
+
+// Logout function
+function logout() {
+    localStorage.removeItem('currentUser');
+    window.location.href = 'login.html';
+}
+
+    </script>
+</body>
+</html>

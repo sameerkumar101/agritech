@@ -1,0 +1,735 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgriTech - Transform Your Farming</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet"> <!--animation on scroll library-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet"> <!--is a Google Fonts CSS URL that loads the Poppins font family with the specified font weights-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/localforage/1.10.0/localforage.min.js"></script> <!--is a CDN link to the LocalForage JavaScript library (v1.10.0), hosted on cdnjs.
+
+-->
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        .parallax {
+            background-attachment: fixed;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+        }
+        
+        .text-gradient {
+            background: linear-gradient(90deg, #166534, #15803d);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hover-scale {
+            transition: transform 0.3s ease;
+        }
+        
+        .hover-scale:hover {
+            transform: scale(1.05);
+        }
+
+        .floating {
+            animation: floating 3s ease-in-out infinite;
+        }
+
+        @keyframes floating {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+            100% { transform: translateY(0px); }
+        }
+
+        .news-scroll {
+            animation: scroll 20s linear infinite;
+        }
+
+        @keyframes scroll {
+            0% { transform: translateX(100%); }
+            100% { transform: translateX(-100%); }
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .section-transition {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .section-transition::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                45deg,
+                transparent,
+                rgba(22, 101, 52, 0.1),
+                transparent
+            );
+            animation: shine 3s infinite;
+        }
+
+        @keyframes shine {
+            0% {
+                transform: translateX(-100%) translateY(-100%);
+            }
+            100% {
+                transform: translateX(100%) translateY(100%);
+            }
+        }
+
+        .hero-section {
+            background: linear-gradient(135deg, rgba(30, 77, 43, 0.9) 0%, rgba(42, 157, 143, 0.9) 50%, rgba(52, 211, 153, 0.9) 100%),
+                        url('https://images.unsplash.com/photo-1625246333195-78d9c38ad449?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-pattern {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 0L60 30L30 60L0 30L30 0z' fill='%23ffffff' fill-opacity='0.1'/%3E%3C/svg%3E");
+            opacity: 0.15;
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.95);
+            border: 1px solid rgba(52, 211, 153, 0.3);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .success-section {
+            background: linear-gradient(135deg, rgba(6, 78, 59, 0.95) 0%, rgba(6, 95, 70, 0.95) 100%),
+                        url('https://images.unsplash.com/photo-1625246333195-78d9c38ad449?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+
+        .weather-section {
+            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+        }
+
+        .stats-section {
+            background: linear-gradient(135deg, #047857 0%, #059669 100%);
+        }
+
+        .cta-section {
+            background: linear-gradient(45deg, #065f46 0%, #047857 50%, #059669 100%);
+        }
+
+        .floating-icon {
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+
+        .glow-button {
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(90deg, #2a9d8f, #34d399);
+            transition: all 0.3s ease;
+        }
+
+        .glow-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(52, 211, 153, 0.3);
+        }
+
+        .glow-button::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, transparent 60%);
+            transform: rotate(45deg);
+            transition: 0.5s;
+        }
+
+        .glow-button:hover::after {
+            transform: rotate(45deg) translate(50%, 50%);
+        }
+
+        .login-btn {
+            position: relative;
+            overflow: hidden;
+            background-size: 200% auto;
+            animation: shimmer 2s linear infinite;
+        }
+
+        .login-btn:hover {
+            background-position: right center;
+        }
+
+        .login-btn::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                45deg,
+                transparent,
+                rgba(255, 255, 255, 0.3),
+                transparent
+            );
+            transform: rotate(45deg);
+            animation: shine 3s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { background-position: 0% center; }
+            100% { background-position: 200% center; }
+        }
+
+        @keyframes shine {
+            0% { transform: translateX(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) rotate(45deg); }
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Navigation -->
+    <nav class="fixed w-full z-50 bg-white/90 backdrop-blur-sm shadow-lg transition-all duration-300">
+        <div class="container mx-auto px-6 py-4">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center space-x-4">
+                    <i class="fas fa-leaf text-green-600 text-2xl"></i>
+                    <a href="#" class="text-green-700 font-bold text-2xl">AgriTech</a>
+                </div>
+                <div class="hidden md:flex space-x-8">
+                    <a href="project.html" class="text-gray-700 hover:text-green-700 transition-colors">Home</a>
+                    <a href="cs.html" class="text-gray-700 hover:text-green-700 transition-colors">Crop Selection</a>
+                    <a href="pi.html" class="text-gray-700 hover:text-green-700 transition-colors">Pest Identification</a>
+                    <a href="pmp.html" class="text-gray-700 hover:text-green-700 transition-colors">Management</a>
+                    <a href="about.html" class="text-gray-700 hover:text-green-700 transition-colors">About</a>
+                    <a href="contact.html" class="text-gray-700 hover:text-green-700 transition-colors">Contact</a>
+                    <a href="blog.html" class="text-gray-700 hover:text-green-700 transition-colors">Blog</a>
+                </div>
+                <div class="flex space-x-4">
+                    <!-- Single Login Button -->
+                    <a href="login.html" class="login-btn px-6 py-2 bg-gradient-to-r from-green-600 to-green-500 text-white rounded-full font-semibold flex items-center space-x-2 hover:shadow-lg transform transition-all duration-300 hover:-translate-y-1">
+                        <i class="fas fa-user-circle"></i>
+                        <span>Login</span>
+                        <div class="login-btn-glow"></div>
+                    </a>
+                    
+                    <!-- User Dashboard (shown when logged in) -->
+                    <div id="userDashboard" class="hidden relative">
+                        <button id="userMenuBtn" class="flex items-center space-x-3 bg-green-50 px-4 py-2 rounded-lg hover:bg-green-100 transition-colors">
+                            <i class="fas fa-user-circle text-green-600"></i>
+                            <span id="username" class="text-green-700 font-medium"></span>
+                            <i class="fas fa-chevron-down text-green-600 text-sm"></i>
+                        </button>
+                        <div id="userDropdown" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2">
+                            <a href="dashboard.html" class="flex items-center px-4 py-2 text-gray-700 hover:bg-green-50">
+                                <i class="fas fa-tachometer-alt w-5"></i>
+                                <span>Dashboard</span>
+                            </a>
+                            <a href="profile.html" class="flex items-center px-4 py-2 text-gray-700 hover:bg-green-50">
+                                <i class="fas fa-user w-5"></i>
+                                <span>Profile</span>
+                            </a>
+                            <hr class="my-2 border-gray-200">
+                            <button onclick="logout()" class="flex items-center w-full px-4 py-2 text-red-600 hover:bg-red-50">
+                                <i class="fas fa-sign-out-alt w-5"></i>
+                                <span>Logout</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="hero-section relative w-full h-screen flex items-center justify-center">
+        <div class="hero-pattern"></div>
+        <div class="relative text-center text-white px-6" data-aos="fade-up" data-aos-duration="1000">
+            <div class="floating-icon text-6xl mb-8">
+                <i class="fas fa-leaf"></i>
+            </div>
+            <h1 class="text-5xl md:text-7xl font-bold mb-6 tracking-tight">
+                Transform Your Farming
+                <span class="block text-emerald-300 mt-2">With Smart Solutions</span>
+            </h1>
+            <p class="mt-6 text-xl md:text-2xl text-emerald-100 max-w-3xl mx-auto">
+                Discover innovative solutions for sustainable agriculture and maximize your crop yield with AI-powered pest management.
+            </p>
+            <div class="mt-12 space-x-6">
+                <button onclick="handleGetStarted()" class="glow-button inline-block px-10 py-4 text-white rounded-full text-lg font-semibold">
+                    Get Started
+                </button>
+                <a href="about.html" class="inline-block px-10 py-4 bg-white/10 backdrop-blur-sm text-white rounded-full text-lg border-2 border-white/20 hover:bg-white/20 transition-all duration-300">
+                    Learn More
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Breaking News Banner -->
+    <div class="bg-gradient-to-r from-emerald-600 to-teal-600 text-white py-3 overflow-hidden">
+        <div class="news-scroll whitespace-nowrap">
+            🌱 Latest Agricultural Updates: New pest control methods discovered | Weather forecast for optimal farming | 
+            Government announces farming subsidies | Tips for sustainable agriculture | Join our farming community today
+        </div>
+    </div>
+
+    <!-- Features Section -->
+    <section class="py-20 bg-parallax features-bg section-transition">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-16" data-aos="fade-up">
+                <h2 class="text-4xl md:text-5xl font-bold text-gradient mb-4">
+                    Transforming Agriculture Together
+                </h2>
+                <p class="text-xl text-gray-600">Join us in revolutionizing farming practices for a sustainable future</p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="feature-card rounded-xl p-8 hover:scale-105 transition-transform duration-300" data-aos="fade-up" data-aos-delay="100">
+                    <div class="flex justify-center mb-6">
+                        <div class="text-green-600 text-4xl floating-icon">
+                            <i class="fas fa-seedling"></i>
+                        </div>
+                    </div>
+                    <h3 class="text-xl font-semibold text-center mb-4">Smart Farming</h3>
+                    <p class="text-gray-600 text-center">
+                        Implement AI-driven solutions for optimal crop management and pest control.
+                    </p>
+                </div>
+
+                <div class="feature-card rounded-xl p-8 hover:scale-105 transition-transform duration-300" data-aos="fade-up" data-aos-delay="200">
+                    <div class="flex justify-center mb-6">
+                        <div class="text-green-600 text-4xl floating-icon">
+                            <i class="fas fa-bug"></i>
+                        </div>
+                    </div>
+                    <h3 class="text-xl font-semibold text-center mb-4">Pest Detection</h3>
+                    <p class="text-gray-600 text-center">
+                        Early pest detection and management using advanced image recognition.
+                    </p>
+                </div>
+
+                <div class="feature-card rounded-xl p-8 hover:scale-105 transition-transform duration-300" data-aos="fade-up" data-aos-delay="300">
+                    <div class="flex justify-center mb-6">
+                        <div class="text-green-600 text-4xl floating-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                    </div>
+                    <h3 class="text-xl font-semibold text-center mb-4">Yield Optimization</h3>
+                    <p class="text-gray-600 text-center">
+                        Maximize your crop yield with data-driven insights and recommendations.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Success Stories -->
+    <section class="py-20 bg-parallax success-bg section-transition">
+        <div class="container mx-auto px-6">
+            <h2 class="text-4xl font-bold text-center text-gradient mb-16" data-aos="fade-up">
+                Success Stories
+            </h2>
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="bg-white rounded-xl shadow-lg p-6 hover-scale" data-aos="fade-up" data-aos-delay="100">
+                    <div class="flex items-center mb-4">
+                        <img src="https://source.unsplash.com/100x100/?farmer" alt="Farmer" class="w-16 h-16 rounded-full object-cover">
+                        <div class="ml-4">
+                            <h3 class="font-semibold">John Smith</h3>
+                            <p class="text-green-600">Wheat Farmer</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-600">
+                        "Using AgriTech's pest management system, I increased my yield by 40% this season!"
+                    </p>
+                </div>
+                
+                <div class="bg-white rounded-xl shadow-lg p-6 hover-scale" data-aos="fade-up" data-aos-delay="200">
+                    <div class="flex items-center mb-4">
+                        <img src="https://source.unsplash.com/100x100/?woman-farmer" alt="Farmer" class="w-16 h-16 rounded-full object-cover">
+                        <div class="ml-4">
+                            <h3 class="font-semibold">Maria Garcia</h3>
+                            <p class="text-green-600">Organic Farmer</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-600">
+                        "The early pest detection system saved my entire tomato crop this year!"
+                    </p>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-lg p-6 hover-scale" data-aos="fade-up" data-aos-delay="300">
+                    <div class="flex items-center mb-4">
+                        <img src="https://source.unsplash.com/100x100/?indian-farmer" alt="Farmer" class="w-16 h-16 rounded-full object-cover">
+                        <div class="ml-4">
+                            <h3 class="font-semibold">Raj Patel</h3>
+                            <p class="text-green-600">Rice Farmer</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-600">
+                        "The income tracking feature helped me optimize my farming expenses significantly."
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Weather Overview Section -->
+    <section class="py-20 weather-bg bg-pattern section-transition">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-16" data-aos="fade-up">
+                <h2 class="text-4xl font-bold text-gradient mb-6">
+                    Weather Overview
+                </h2>
+                <p class="text-xl text-gray-600">
+                    Stay informed about weather conditions that affect your farming
+                </p>
+            </div>
+            
+            <!-- Weather Information Cards -->
+            <div class="grid md:grid-cols-4 gap-8 mb-12">
+                <!-- Temperature Card -->
+                <a href="https://en.wikipedia.org/wiki/Temperature_and_agriculture" 
+                   target="_blank" 
+                   rel="noopener noreferrer" 
+                   class="bg-green-50 rounded-xl p-6 hover-scale group cursor-pointer" 
+                   data-aos="fade-up" 
+                   data-aos-delay="100">
+                    <div class="flex justify-center mb-4">
+                        <i class="fas fa-temperature-high text-green-600 text-4xl group-hover:text-green-700"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-center mb-2 group-hover:text-green-700">Temperature Monitoring</h3>
+                    <p class="text-gray-600 text-center">
+                        Track daily temperature variations to protect your crops
+                    </p>
+                    <div class="mt-4 text-center text-green-600 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <span class="text-sm">Click to learn more <i class="fas fa-external-link-alt ml-1"></i></span>
+                    </div>
+                </a>
+
+                <!-- Rainfall Card -->
+                <a href="https://en.wikipedia.org/wiki/Precipitation_(meteorology)#Agriculture" 
+                   target="_blank" 
+                   rel="noopener noreferrer" 
+                   class="bg-green-50 rounded-xl p-6 hover-scale group cursor-pointer" 
+                   data-aos="fade-up" 
+                   data-aos-delay="200">
+                    <div class="flex justify-center mb-4">
+                        <i class="fas fa-cloud-rain text-green-600 text-4xl group-hover:text-green-700"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-center mb-2 group-hover:text-green-700">Rainfall Patterns</h3>
+                    <p class="text-gray-600 text-center">
+                        Monitor precipitation levels for optimal irrigation
+                    </p>
+                    <div class="mt-4 text-center text-green-600 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <span class="text-sm">Click to learn more <i class="fas fa-external-link-alt ml-1"></i></span>
+                    </div>
+                </a>
+
+                <!-- Wind Card -->
+                <a href="https://en.wikipedia.org/wiki/Wind#Agriculture" 
+                   target="_blank" 
+                   rel="noopener noreferrer" 
+                   class="bg-green-50 rounded-xl p-6 hover-scale group cursor-pointer" 
+                   data-aos="fade-up" 
+                   data-aos-delay="300">
+                    <div class="flex justify-center mb-4">
+                        <i class="fas fa-wind text-green-600 text-4xl group-hover:text-green-700"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-center mb-2 group-hover:text-green-700">Wind Analysis</h3>
+                    <p class="text-gray-600 text-center">
+                        Track wind patterns to protect against crop damage
+                    </p>
+                    <div class="mt-4 text-center text-green-600 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <span class="text-sm">Click to learn more <i class="fas fa-external-link-alt ml-1"></i></span>
+                    </div>
+                </a>
+
+                <!-- Sunlight Card -->
+                <a href="https://en.wikipedia.org/wiki/Sunlight#Agriculture" 
+                   target="_blank" 
+                   rel="noopener noreferrer" 
+                   class="bg-green-50 rounded-xl p-6 hover-scale group cursor-pointer" 
+                   data-aos="fade-up" 
+                   data-aos-delay="400">
+                    <div class="flex justify-center mb-4">
+                        <i class="fas fa-sun text-green-600 text-4xl group-hover:text-green-700"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-center mb-2 group-hover:text-green-700">Sunlight Hours</h3>
+                    <p class="text-gray-600 text-center">
+                        Optimize crop growth with sunlight exposure data
+                    </p>
+                    <div class="mt-4 text-center text-green-600 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <span class="text-sm">Click to learn more <i class="fas fa-external-link-alt ml-1"></i></span>
+                    </div>
+                </a>
+            </div>
+
+            <!-- Divider -->
+            <div class="border-t border-green-100 my-12"></div>
+
+            <!-- Real-time Weather Section -->
+            <div class="text-center" data-aos="fade-up">
+                <h3 class="text-2xl font-bold text-green-700 mb-4">Real-Time Weather Forecast</h3>
+                <p class="text-gray-600 mb-8">
+                    Get location-specific weather updates for better farming decisions
+                </p>
+                <a href="https://www.google.com/search?q=weather+forecast" 
+                   target="_blank" 
+                   rel="noopener noreferrer" 
+                   class="inline-block px-8 py-4 bg-green-600 text-white rounded-full text-lg hover:bg-green-700 transition-all duration-300 hover:scale-105 hover:shadow-lg">
+                    <i class="fas fa-external-link-alt mr-2"></i>
+                    View Detailed Weather Reports
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Statistics Section -->
+    <section class="py-20 bg-parallax stats-bg section-transition">
+        <div class="absolute inset-0 bg-green-900/90 backdrop-blur-sm"></div>
+        <div class="container mx-auto px-6 relative">
+            <div class="grid md:grid-cols-4 gap-8 text-center text-white">
+                <div class="p-6" data-aos="fade-up" data-aos-delay="100">
+                    <div class="text-4xl font-bold mb-2 counting" data-target="1000">0</div>
+                    <p class="text-green-200">Happy Farmers</p>
+                </div>
+                <div class="p-6" data-aos="fade-up" data-aos-delay="200">
+                    <div class="text-4xl font-bold mb-2 counting" data-target="50000">0</div>
+                    <p class="text-green-200">Hectares Protected</p>
+                </div>
+                <div class="p-6" data-aos="fade-up" data-aos-delay="300">
+                    <div class="text-4xl font-bold mb-2 counting" data-target="200">0</div>
+                    <p class="text-green-200">Pest Species Identified</p>
+                </div>
+                <div class="p-6" data-aos="fade-up" data-aos-delay="400">
+                    <div class="text-4xl font-bold mb-2 counting" data-target="95">0</div>
+                    <p class="text-green-200">Success Rate</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Call to Action -->
+    <section class="py-20 bg-gradient-to-r from-green-600 to-green-800 text-white">
+        <div class="container mx-auto px-6 text-center">
+            <h2 class="text-4xl font-bold mb-8" data-aos="fade-up">
+                Ready to Transform Your Farming?
+            </h2>
+            <p class="text-xl mb-8 text-green-100" data-aos="fade-up" data-aos-delay="100">
+                Join thousands of farmers who have already improved their yields with our smart solutions.
+            </p>
+            <button class="px-8 py-4 bg-white text-green-600 rounded-full text-lg font-semibold hover:bg-green-100 transition-all duration-300 hover:scale-105 hover:shadow-lg" data-aos="fade-up" data-aos-delay="200">
+                Start Free Trial
+            </button>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-green-900 text-white py-16">
+        <div class="container mx-auto px-6">
+            <div class="grid md:grid-cols-4 gap-12">
+                <div>
+                    <div class="flex items-center space-x-4 mb-6">
+                        <i class="fas fa-leaf text-green-400 text-2xl"></i>
+                        <h3 class="text-2xl font-bold">AgriTech</h3>
+                    </div>
+                    <p class="text-green-200">
+                        Empowering farmers with innovative solutions for sustainable agriculture.
+                    </p>
+                </div>
+                <div>
+                    <h4 class="text-lg font-semibold mb-6">Quick Links</h4>
+                    <ul class="space-y-4">
+                        <li><a href="about.html" class="text-green-200 hover:text-white transition-colors">About Us</a></li>
+                        <li><a href="contact.html" class="text-green-200 hover:text-white transition-colors">Services</a></li>
+                        <li><a href="contact.html" class="text-green-200 hover:text-white transition-colors">Contact</a></li>
+                        <li><a href="blog.html" class="text-green-200 hover:text-white transition-colors">Blog</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-lg font-semibold mb-6">Services</h4>
+                    <ul class="space-y-4">
+                        <li><a href="pmp.html" class="text-green-200 hover:text-white transition-colors">Pest Management</a></li>
+                        <li><a href="cs.html" class="text-green-200 hover:text-white transition-colors">Crop Selection</a></li>
+                        <li><a href="#weather-section" onclick="document.querySelector('.weather-bg').scrollIntoView({behavior: 'smooth'})" class="text-green-200 hover:text-white transition-colors">Weather Monitoring</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-lg font-semibold mb-6">Connect With Us</h4>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-green-200 hover:text-white transition-colors">
+                            <i class="fab fa-facebook text-2xl"></i>
+                        </a>
+                        <a href="#" class="text-green-200 hover:text-white transition-colors">
+                            <i class="fab fa-twitter text-2xl"></i>
+                        </a>
+                        <a href="#" class="text-green-200 hover:text-white transition-colors">
+                            <i class="fab fa-instagram text-2xl"></i>
+                        </a>
+                        <a href="#" class="text-green-200 hover:text-white transition-colors">
+                            <i class="fab fa-linkedin text-2xl"></i>
+                        </a>
+                    </div>
+                    <div class="mt-6">
+                        <h4 class="text-lg font-semibold mb-4">Newsletter</h4>
+                        <div class="flex">
+                            <input type="email" placeholder="Enter your email" 
+                                   class="px-4 py-2 rounded-l-full bg-green-800 text-white focus:outline-none focus:ring-2 focus:ring-green-400">
+                            <button class="px-6 py-2 bg-green-600 rounded-r-full hover:bg-green-500 transition-colors">
+                                Subscribe
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-12 pt-8 border-t border-green-800 text-center text-green-200">
+                <p>&copy; 2025 AgriTech. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        // Initialize AOS
+        AOS.init({
+            duration: 1000,
+            once: true
+        });
+
+        // Navbar scroll effect
+        window.addEventListener('scroll', () => {
+            const nav = document.querySelector('nav');
+            if (window.scrollY > 100) {
+                nav.classList.add('shadow-lg', 'bg-white/95');
+            } else {
+                nav.classList.remove('shadow-lg', 'bg-white/95');
+            }
+        });
+
+        // Counter animation
+        const counters = document.querySelectorAll('.counting');
+        counters.forEach(counter => {
+            const target = parseInt(counter.getAttribute('data-target'));
+            const increment = target / 200;
+            
+            function updateCount() {
+                const count = parseInt(counter.innerText);
+                if (count < target) {
+                    counter.innerText = Math.ceil(count + increment);
+                    setTimeout(updateCount, 10);
+                } else {
+                    counter.innerText = target;
+                }
+            }
+            
+            updateCount();
+        });
+
+        // Check login status and handle user dashboard
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            const loginBtn = document.querySelector('.login-btn');
+            const userDashboard = document.getElementById('userDashboard');
+            const userMenuBtn = document.getElementById('userMenuBtn');
+            const userDropdown = document.getElementById('userDropdown');
+            const username = document.getElementById('username');
+
+            if (currentUser) {
+                loginBtn.classList.add('hidden');
+                userDashboard.classList.remove('hidden');
+                username.textContent = currentUser.username;
+
+                // Add click event for dropdown toggle
+                userMenuBtn.addEventListener('click', () => {
+                    userDropdown.classList.toggle('hidden');
+                });
+
+                // Close dropdown when clicking outside
+                document.addEventListener('click', (e) => {
+                    if (!userDashboard.contains(e.target)) {
+                        userDropdown.classList.add('hidden');
+                    }
+                });
+            } else {
+                loginBtn.classList.remove('hidden');
+                userDashboard.classList.add('hidden');
+            }
+        });
+
+        // Logout function
+        function logout() {
+            localStorage.removeItem('currentUser');
+            window.location.href = 'login.html';
+        }
+
+        function handleGetStarted() {
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            
+            if (currentUser) {
+                // Show "already logged in" message
+                const message = document.getElementById('alreadyLoggedInMessage');
+                message.classList.remove('hidden');
+                
+                // Hide message after 3 seconds
+                setTimeout(() => {
+                    message.classList.add('hidden');
+                }, 3000);
+            } else {
+                // Redirect to login page
+                window.location.href = 'login.html';
+            }
+        }
+
+        // Check URL parameters for redirect message
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('login') === 'required') {
+            const message = document.createElement('div');
+            message.className = 'fixed top-4 left-1/2 transform -translate-x-1/2 bg-yellow-600 text-white px-6 py-3 rounded-lg shadow-lg z-50';
+            message.innerHTML = `
+                <div class="flex items-center space-x-2">
+                    <i class="fas fa-info-circle"></i>
+                    <span>Please log in to continue</span>
+                </div>
+            `;
+            document.body.appendChild(message);
+            setTimeout(() => message.remove(), 3000);
+        }
+    </script>
+
+    <!-- Add this success message div near the end of the body -->
+    <div id="alreadyLoggedInMessage" class="fixed top-4 left-1/2 transform -translate-x-1/2 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg z-50 hidden">
+        <div class="flex items-center space-x-2">
+            <i class="fas fa-check-circle"></i>
+            <span>You are already logged in!</span>
+        </div>
+    </div>
+</body>
+</html>
